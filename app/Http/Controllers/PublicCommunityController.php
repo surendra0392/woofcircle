@@ -139,11 +139,34 @@ class PublicCommunityController
                 \Illuminate\Support\Facades\Mail::to($user->email)
                     ->send(new \App\Mail\EventRegistrationConfirmationMail($user->name, $event));
             }
+
+            // WhatsApp & Push for Event Registration
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($user?->mobile_number)) {
+                    $eventDate = $event->start_date ? \Illuminate\Support\Carbon::parse($event->start_date)->format('M d, Y') : 'Upcoming';
+                    $whatsAppService->sendTextMessage(
+                        $user->mobile_number,
+                        "🎟️ *WoofCircle Event Registration Confirmed!*\n\nHello {$user->name}, your pass for *{$event->title}* on *{$eventDate}* at *{$event->location}* is confirmed.\n\nEvent details: " . route('community.events.show', $event->slug)
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled() && $user) {
+                    $pushService->sendToUser(
+                        $user->id,
+                        "Event Pass Confirmed 🎟️",
+                        "Your registration for {$event->title} is confirmed!",
+                        route('community.events.show', $event->slug)
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp/Push event registration error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send event registration email: ' . $e->getMessage());
         }
 
-        return back()->with('success', 'You have successfully registered for the event!');
+        return back()->with('success', 'You have successfully registered for this event!');
     }
 
     /**

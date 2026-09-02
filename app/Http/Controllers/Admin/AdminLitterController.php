@@ -334,6 +334,28 @@ class AdminLitterController
                         $litter->title,
                         route('marketplace.puppies.show', $litter->slug)
                     ));
+
+                // WhatsApp & Push to breeder
+                try {
+                    $whatsAppService = app(\App\Services\WhatsAppService::class);
+                    if ($whatsAppService->isEnabled() && !empty($litter->user->mobile_number)) {
+                        $whatsAppService->sendTextMessage(
+                            $litter->user->mobile_number,
+                            "🎉 *Your WoofCircle Listing is Live!*\n\nYour Puppy/Litter listing *'{$litter->title}'* has been verified and published to the marketplace:\n" . route('marketplace.puppies.show', $litter->slug)
+                        );
+                    }
+                    $pushService = app(\App\Services\PushNotificationService::class);
+                    if ($pushService->isEnabled()) {
+                        $pushService->sendToUser(
+                            $litter->user->id,
+                            "Listing Approved 🎉",
+                            "Your listing '{$litter->title}' is now live on the marketplace.",
+                            route('marketplace.puppies.show', $litter->slug)
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('WhatsApp/Push litter approved error: ' . $e->getMessage());
+                }
             } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::warning('Failed to send litter approved email: ' . $e->getMessage());
             }

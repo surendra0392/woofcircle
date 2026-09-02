@@ -74,6 +74,43 @@ class AdminSupportTicketController
             }
         }
 
+        try {
+            $user = $ticket->user;
+            if ($user && $user->email) {
+                \Illuminate\Support\Facades\Mail::to($user->email)
+                    ->send(new \App\Mail\SupportTicketReplyMail(
+                        $user->name,
+                        $ticket,
+                        $request->message,
+                        auth('admin')->user()->name ?? 'Support Concierge'
+                    ));
+            }
+
+            // WhatsApp & Push to user
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($user?->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $user->mobile_number,
+                        "💬 *WoofCircle Support Ticket #{$ticket->id} Update*\n\nOur concierge team has replied to: *{$ticket->subject}*\n\"" . \Illuminate\Support\Str::limit(strip_tags($request->message), 140) . "\"\n\nView conversation: " . route('dashboard.support.show', $ticket->id)
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled() && $user) {
+                    $pushService->sendToUser(
+                        $user->id,
+                        "Support Ticket #{$ticket->id} Reply 💬",
+                        "New reply from concierge: " . \Illuminate\Support\Str::limit(strip_tags($request->message), 80),
+                        route('dashboard.support.show', $ticket->id)
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp/Push ticket reply error: ' . $e->getMessage());
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send ticket reply notifications: ' . $e->getMessage());
+        }
+
         return back()->with('success', 'Reply sent successfully.');
     }
 

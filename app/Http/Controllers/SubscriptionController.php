@@ -233,6 +233,28 @@ class SubscriptionController
                     $billing,
                     $endsAt->format('M d, Y')
                 ));
+
+            // WhatsApp & Push for Subscription
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($user->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $user->mobile_number,
+                        "👑 *WoofCircle Privilege Pass Activated!*\n\nCongratulations {$user->name}, your *{$tierName}* membership ({$billing}) is now active.\n\nEnjoy verified badges, enhanced listing priority, and VIP concierge privileges:\n" . route('subscription.index')
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled()) {
+                    $pushService->sendToUser(
+                        $user->id,
+                        "Privilege Pass Activated 👑",
+                        "Welcome to {$tierName} tier! Your benefits are now active.",
+                        route('subscription.index')
+                    );
+                }
+            } catch (\Throwable $e) {
+                Log::warning('WhatsApp/Push subscription notification error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             Log::warning('Failed to send subscription confirmation email: ' . $e->getMessage());
         }
@@ -267,6 +289,28 @@ class SubscriptionController
                     'monthly',
                     now()->addMonth()->format('M d, Y')
                 ));
+
+            // WhatsApp & Push for Stripe Subscription
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($user->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $user->mobile_number,
+                        "👑 *WoofCircle Privilege Pass Activated!*\n\nCongratulations {$user->name}, your *{$tierName}* membership is now active.\n\nEnjoy VIP sanctuary privileges:\n" . route('subscription.index')
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled()) {
+                    $pushService->sendToUser(
+                        $user->id,
+                        "Privilege Pass Activated 👑",
+                        "Welcome to {$tierName} tier! Your benefits are now active.",
+                        route('subscription.index')
+                    );
+                }
+            } catch (\Throwable $e) {
+                Log::warning('WhatsApp/Push stripe subscription notification error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             Log::warning('Failed to send stripe subscription email: ' . $e->getMessage());
         }

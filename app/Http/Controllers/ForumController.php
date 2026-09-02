@@ -107,6 +107,21 @@ class ForumController
                         Str::limit(strip_tags($validated['body']), 160),
                         route('forum.thread', [$category->slug, $thread->slug])
                     ));
+
+                // Push notification to thread author
+                try {
+                    $pushService = app(\App\Services\PushNotificationService::class);
+                    if ($pushService->isEnabled()) {
+                        $pushService->sendToUser(
+                            $author->id,
+                            "New Forum Reply 💬",
+                            "{$replier->name} replied to '{$thread->title}'.",
+                            route('forum.thread', [$category->slug, $thread->slug])
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('Push forum notification error: ' . $e->getMessage());
+                }
             }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send forum reply email: ' . $e->getMessage());

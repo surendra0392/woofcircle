@@ -64,6 +64,19 @@ class RegisteredUserController
 
         try {
             \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\WelcomeUserMail($user));
+
+            // WhatsApp Welcome
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($user->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $user->mobile_number,
+                        "🐾 *Welcome to WoofCircle, {$user->name}!*\n\nWe are delighted to welcome you to India's premier canine sanctuary and registry. Manage your dogs, explore verified litters, and connect with certified specialists:\n" . route('dashboard')
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp welcome message error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send welcome email: ' . $e->getMessage());
         }

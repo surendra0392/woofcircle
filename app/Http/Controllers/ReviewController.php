@@ -84,6 +84,30 @@ class ReviewController
                             $validated['rating'],
                             $validated['comment']
                         ));
+
+                    // WhatsApp & Push to owner
+                    try {
+                        $ownerPhone = $targetModel->phone ?? $targetModel->mobile_number ?? $targetModel->user?->mobile_number ?? null;
+                        $whatsAppService = app(\App\Services\WhatsAppService::class);
+                        if ($whatsAppService->isEnabled() && !empty($ownerPhone)) {
+                            $whatsAppService->sendTextMessage(
+                                $ownerPhone,
+                                "🌟 *New Review Received on WoofCircle*\n\n*{$reviewer->name}* just left a {$validated['rating']}-star review for *{$targetName}*:\n\"" . \Illuminate\Support\Str::limit($validated['comment'] ?? 'No comment', 120) . "\"\n\nView reviews: " . route('dashboard')
+                            );
+                        }
+
+                        $pushService = app(\App\Services\PushNotificationService::class);
+                        if ($pushService->isEnabled() && $targetModel->user_id) {
+                            $pushService->sendToUser(
+                                $targetModel->user_id,
+                                "New {$validated['rating']}-Star Review 🌟",
+                                "{$reviewer->name} left a review on {$targetName}.",
+                                route('dashboard')
+                            );
+                        }
+                    } catch (\Throwable $e) {
+                        \Illuminate\Support\Facades\Log::warning('WhatsApp/Push review notification error: ' . $e->getMessage());
+                    }
                 }
             }
         } catch (\Throwable $e) {

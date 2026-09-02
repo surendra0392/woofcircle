@@ -326,6 +326,28 @@ class AdminStudServiceController
                         $studService->title,
                         route('marketplace.studs.show', $studService->slug)
                     ));
+
+                // WhatsApp & Push to owner
+                try {
+                    $whatsAppService = app(\App\Services\WhatsAppService::class);
+                    if ($whatsAppService->isEnabled() && !empty($studService->user->mobile_number)) {
+                        $whatsAppService->sendTextMessage(
+                            $studService->user->mobile_number,
+                            "🎉 *Your WoofCircle Stud Listing is Live!*\n\nYour Stud Service listing *'{$studService->title}'* has been approved and published to the registry:\n" . route('marketplace.studs.show', $studService->slug)
+                        );
+                    }
+                    $pushService = app(\App\Services\PushNotificationService::class);
+                    if ($pushService->isEnabled()) {
+                        $pushService->sendToUser(
+                            $studService->user->id,
+                            "Stud Listing Approved 🎉",
+                            "Your listing '{$studService->title}' is now live on the registry.",
+                            route('marketplace.studs.show', $studService->slug)
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('WhatsApp/Push stud approved error: ' . $e->getMessage());
+                }
             } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::warning('Failed to send stud approved email: ' . $e->getMessage());
             }

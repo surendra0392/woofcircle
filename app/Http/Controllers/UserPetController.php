@@ -85,6 +85,29 @@ class UserPetController
                 \Illuminate\Support\Facades\Mail::to($user->email)
                     ->send(new \App\Mail\PetAddedMail($user->name, $pet));
             }
+
+            // WhatsApp & Push for Canine Passport
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($user->mobile_number)) {
+                    $passportUrl = route('pets.passport.show', $pet->passport_number ?? $pet->id);
+                    $whatsAppService->sendTextMessage(
+                        $user->mobile_number,
+                        "🐾 *Canine Digital Passport Created!*\n\n*{$pet->name}* is now registered on the WoofCircle Registry.\n\nPassport No: *{$pet->passport_number}*\nView Digital Passport: {$passportUrl}"
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled()) {
+                    $pushService->sendToUser(
+                        $user->id,
+                        "Passport Created for {$pet->name} 🐾",
+                        "Official Digital Canine Passport #{$pet->passport_number} is now active.",
+                        route('pets.passport.show', $pet->passport_number ?? $pet->id)
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp/Push pet created error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send pet added email: ' . $e->getMessage());
         }

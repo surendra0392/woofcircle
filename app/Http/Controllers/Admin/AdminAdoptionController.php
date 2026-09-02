@@ -291,6 +291,28 @@ class AdminAdoptionController
                         $adoption->title,
                         route('marketplace.adoption.show', $adoption->slug)
                     ));
+
+                // WhatsApp & Push to rescuer / welfare
+                try {
+                    $whatsAppService = app(\App\Services\WhatsAppService::class);
+                    if ($whatsAppService->isEnabled() && !empty($adoption->user->mobile_number)) {
+                        $whatsAppService->sendTextMessage(
+                            $adoption->user->mobile_number,
+                            "🐾 *Your WoofCircle Adoption Listing is Live!*\n\nYour adoption listing for *'{$adoption->title}'* has been approved and published to the rescue network:\n" . route('marketplace.adoption.show', $adoption->slug)
+                        );
+                    }
+                    $pushService = app(\App\Services\PushNotificationService::class);
+                    if ($pushService->isEnabled()) {
+                        $pushService->sendToUser(
+                            $adoption->user->id,
+                            "Adoption Listing Approved 🐾",
+                            "Your listing for '{$adoption->title}' is now live on the rescue network.",
+                            route('marketplace.adoption.show', $adoption->slug)
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('WhatsApp/Push adoption approved error: ' . $e->getMessage());
+                }
             } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::warning('Failed to send adoption approved email: ' . $e->getMessage());
             }

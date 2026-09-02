@@ -46,6 +46,30 @@ class SendVaccinationReminders extends Command
                 try {
                     Mail::to($owner->email)->send(new VaccinationReminderMail($vaccination));
                     
+                    // WhatsApp & Push Reminder
+                    try {
+                        $whatsAppService = app(\App\Services\WhatsAppService::class);
+                        if ($whatsAppService->isEnabled() && !empty($owner->mobile_number)) {
+                            $dueDateStr = $vaccination->next_due_date ? \Illuminate\Support\Carbon::parse($vaccination->next_due_date)->format('M d, Y') : 'Soon';
+                            $whatsAppService->sendTextMessage(
+                                $owner->mobile_number,
+                                "💉 *WoofCircle Health Alert*\n\nFriendly reminder: Your pet *{$vaccination->pet->name}* has a vaccination (*{$vaccination->vaccine_name}*) scheduled on *{$dueDateStr}*.\n\nView records: " . route('dashboard')
+                            );
+                        }
+                        $pushService = app(\App\Services\PushNotificationService::class);
+                        if ($pushService->isEnabled()) {
+                            $dueDateStr = $vaccination->next_due_date ? \Illuminate\Support\Carbon::parse($vaccination->next_due_date)->format('M d, Y') : 'Soon';
+                            $pushService->sendToUser(
+                                $owner->id,
+                                "Vaccination Reminder 💉",
+                                "{$vaccination->pet->name} is due for {$vaccination->vaccine_name} on {$dueDateStr}.",
+                                route('dashboard')
+                            );
+                        }
+                    } catch (\Throwable $e) {
+                        \Illuminate\Support\Facades\Log::warning('WhatsApp/Push vaccination reminder error: ' . $e->getMessage());
+                    }
+
                     $vaccination->update(['reminder_sent_at' => now()]);
                     $count++;
                     

@@ -90,6 +90,28 @@ class SupportTicketController
                 $supportStaffEmail = config('mail.support_username', 'support@woofcircle.in');
                 \Illuminate\Support\Facades\Mail::to($supportStaffEmail)
                     ->send(new \App\Mail\SupportTicketStaffAlertMail($user->name, $user->email, $ticket));
+
+                // WhatsApp & Push to user
+                try {
+                    $whatsAppService = app(\App\Services\WhatsAppService::class);
+                    if ($whatsAppService->isEnabled() && !empty($user->mobile_number)) {
+                        $whatsAppService->sendTextMessage(
+                            $user->mobile_number,
+                            "🎫 *WoofCircle Support Ticket #{$ticket->id} Created*\n\nSubject: *{$ticket->subject}*\nPriority: " . strtoupper($ticket->priority) . "\n\nOur concierge team is reviewing your inquiry. Track status:\n" . route('dashboard.support.show', $ticket->id)
+                        );
+                    }
+                    $pushService = app(\App\Services\PushNotificationService::class);
+                    if ($pushService->isEnabled()) {
+                        $pushService->sendToUser(
+                            $user->id,
+                            "Ticket #{$ticket->id} Submitted 🎫",
+                            "Our concierge is reviewing: {$ticket->subject}",
+                            route('dashboard.support.show', $ticket->id)
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('WhatsApp/Push ticket creation error: ' . $e->getMessage());
+                }
             }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send support ticket emails: ' . $e->getMessage());
