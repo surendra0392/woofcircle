@@ -6,7 +6,6 @@ use App\Models\Event;
 use App\Models\EventType;
 use App\Models\State;
 use Carbon\Carbon;
-use Faker\Factory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -43,8 +42,6 @@ class EventSeeder extends Seeder
         }
 
         // 2. Create Sample Events
-        $faker = Factory::create();
-
         $events = [
             [
                 'title' => 'Annual Golden Retriever Championship',
