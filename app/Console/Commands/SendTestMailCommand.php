@@ -29,12 +29,15 @@ class SendTestMailCommand extends Command
     {
         $email = $this->argument('email') ?? 'surendrakoneru0392@gmail.com';
 
-        $this->info("SMTP Host: " . config('mail.mailers.smtp.host') . ":" . config('mail.mailers.smtp.port') . " (" . config('mail.mailers.smtp.scheme', config('mail.mailers.smtp.encryption')) . ")");
+        $host = config('mail.mailers.smtp.host');
+        $port = config('mail.mailers.smtp.port');
+        $encryption = config('mail.mailers.smtp.encryption');
+
+        $this->info("SMTP Host: {$host}:{$port} ({$encryption})");
         $this->info("From Address: " . config('mail.from.address') . " (" . config('mail.from.name') . ")");
         $this->info("Sending instant test email to: {$email}...");
 
         try {
-            // Send synchronously in real-time bypassing queue
             Mail::to($email)->sendNow(new NewsletterWelcomeMail('Surendra', $email, 'test-token-' . time()));
             $this->info("✅ Test email sent successfully to {$email}! Please check your inbox (and spam folder).");
             return Command::SUCCESS;

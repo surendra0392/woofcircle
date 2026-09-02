@@ -17,14 +17,8 @@ return [
             'username' => env('MAIL_USERNAME', 'no-reply@woofcircle.in'),
             'password' => env('MAIL_PASSWORD'),
             'timeout' => null,
+            'verify_peer' => env('MAIL_VERIFY_PEER', false),
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'https://woofcircle.in'), PHP_URL_HOST)),
-            'stream' => [
-                'ssl' => [
-                    'allow_self_signed' => true,
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                ],
-            ],
         ],
 
         'support' => [
@@ -35,13 +29,7 @@ return [
             'username' => env('MAIL_SUPPORT_USERNAME', 'support@woofcircle.in'),
             'password' => env('MAIL_SUPPORT_PASSWORD', env('MAIL_PASSWORD')),
             'timeout' => null,
-            'stream' => [
-                'ssl' => [
-                    'allow_self_signed' => true,
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                ],
-            ],
+            'verify_peer' => env('MAIL_VERIFY_PEER', false),
         ],
 
         'info' => [
@@ -52,13 +40,7 @@ return [
             'username' => env('MAIL_INFO_USERNAME', 'info@woofcircle.in'),
             'password' => env('MAIL_INFO_PASSWORD', env('MAIL_PASSWORD')),
             'timeout' => null,
-            'stream' => [
-                'ssl' => [
-                    'allow_self_signed' => true,
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                ],
-            ],
+            'verify_peer' => env('MAIL_VERIFY_PEER', false),
         ],
 
         'hello' => [
@@ -69,13 +51,7 @@ return [
             'username' => env('MAIL_HELLO_USERNAME', 'hello@woofcircle.in'),
             'password' => env('MAIL_HELLO_PASSWORD', env('MAIL_PASSWORD')),
             'timeout' => null,
-            'stream' => [
-                'ssl' => [
-                    'allow_self_signed' => true,
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                ],
-            ],
+            'verify_peer' => env('MAIL_VERIFY_PEER', false),
         ],
 
         'log' => [
