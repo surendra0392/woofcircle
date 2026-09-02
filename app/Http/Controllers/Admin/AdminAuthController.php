@@ -56,6 +56,15 @@ class AdminAuthController
             Log::error('Failed to send admin login notification: '.$e->getMessage());
         }
 
+        $intended = $request->session()->get('url.intended');
+        if ($intended) {
+            $path = parse_url($intended, PHP_URL_PATH) ?? '';
+            if (!str_starts_with($path, '/admin') || str_contains($path, '/login')) {
+                $request->session()->forget('url.intended');
+                return redirect()->route('admin.dashboard');
+            }
+        }
+
         return redirect()->intended('/admin/dashboard');
     }
 

@@ -94,7 +94,16 @@ class PortalAuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended("/{$portal}");
+        $intended = $request->session()->get('url.intended');
+        if ($intended) {
+            $path = parse_url($intended, PHP_URL_PATH) ?? '';
+            if (!str_starts_with($path, "/{$portal}") || str_contains($path, '/login')) {
+                $request->session()->forget('url.intended');
+                return redirect("/{$portal}/dashboard");
+            }
+        }
+
+        return redirect()->intended("/{$portal}/dashboard");
     }
 
     private function processLogout(Request $request, string $portal)

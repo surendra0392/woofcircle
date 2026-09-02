@@ -94,6 +94,24 @@ return Application::configure(basePath: dirname(__DIR__))
             return $request->expectsJson() ? null : route('login');
         });
 
+        $middleware->redirectUsersTo(function (Request $request) {
+            if (Auth::guard('admin')->check()) {
+                $admin = Auth::guard('admin')->user();
+                if ($admin) {
+                    if (in_array($admin->role, config('roles.support', []))) {
+                        return '/support/dashboard';
+                    } elseif (in_array($admin->role, config('roles.hr', []))) {
+                        return '/hr/dashboard';
+                    } elseif (in_array($admin->role, config('roles.agent', []))) {
+                        return '/agent/dashboard';
+                    }
+                    return '/admin/dashboard';
+                }
+            }
+
+            return route('dashboard');
+        });
+
 
         $middleware->validateCsrfTokens(except: [
             '/api/location/set',

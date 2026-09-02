@@ -39,3 +39,16 @@ test('users can logout', function () {
     $this->assertGuest();
     $response->assertRedirect('/');
 });
+
+test('users are redirected to user dashboard even if intended url was admin or staff portal', function () {
+    $user = User::factory()->create();
+
+    $response = $this->withSession(['url.intended' => 'http://localhost/admin/dashboard'])
+        ->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+    $this->assertAuthenticated();
+    $response->assertRedirect(route('dashboard'));
+});
