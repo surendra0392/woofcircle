@@ -184,6 +184,22 @@ class BreederHealthRecordController
             'message' => "The breeder has approved the transfer of puppy '{$transferRequest->pet_name}'. Waiting for Admin's final approval.",
         ]);
 
+        try {
+            $buyer = $transferRequest->buyer;
+            $breeder = Auth::user();
+            if ($buyer && $buyer->email) {
+                \Illuminate\Support\Facades\Mail::to($buyer->email)
+                    ->send(new \App\Mail\TransferRequestStatusMail(
+                        $buyer->name,
+                        $breeder->name,
+                        $transferRequest->pet_name,
+                        'pending_admin'
+                    ));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send transfer approval email: ' . $e->getMessage());
+        }
+
         // 6. Create system notification (visible to admin)
         Notification::create([
             'user_id' => $transferRequest->breeder_id,
@@ -225,6 +241,22 @@ class BreederHealthRecordController
             'title' => 'Puppy Transfer Request Rejected',
             'message' => "The breeder has rejected your transfer request for puppy '{$transferRequest->pet_name}'.",
         ]);
+
+        try {
+            $buyer = $transferRequest->buyer;
+            $breeder = Auth::user();
+            if ($buyer && $buyer->email) {
+                \Illuminate\Support\Facades\Mail::to($buyer->email)
+                    ->send(new \App\Mail\TransferRequestStatusMail(
+                        $buyer->name,
+                        $breeder->name,
+                        $transferRequest->pet_name,
+                        'rejected'
+                    ));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send transfer rejection email: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Transfer request rejected.');
     }

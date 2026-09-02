@@ -40,5 +40,20 @@ class AppServiceProvider extends ServiceProvider
             'event' => \App\Models\Event::class,
             'gallery' => \App\Models\Gallery::class,
         ]);
+
+        \Illuminate\Auth\Notifications\ResetPassword::toMailUsing(function ($notifiable, $token) {
+            $resetUrl = url(route('password.reset', [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ], false));
+
+            return (new \Illuminate\Notifications\Messages\MailMessage)
+                ->subject('Reset Your WoofCircle Password')
+                ->view('emails.password_reset', [
+                    'name' => $notifiable->name ?? 'Member',
+                    'email' => $notifiable->getEmailForPasswordReset(),
+                    'resetUrl' => $resetUrl,
+                ]);
+        });
     }
 }

@@ -67,6 +67,29 @@ class ReviewController
             'status' => 'approved', // Auto-approve for now, can be changed to 'pending' later
         ]);
 
+        try {
+            $reviewer = Auth::user();
+            $targetModel = app($validated['reviewable_type'])->find($validated['reviewable_id']);
+            if ($targetModel) {
+                $targetName = $targetModel->name ?? $targetModel->clinic_name ?? $targetModel->shop_name ?? $targetModel->title ?? 'Your Listing';
+                $ownerEmail = $targetModel->user?->email ?? $targetModel->email ?? null;
+                $ownerName = $targetModel->user?->name ?? $targetName;
+
+                if ($ownerEmail && $ownerEmail !== $reviewer->email) {
+                    \Illuminate\Support\Facades\Mail::to($ownerEmail)
+                        ->send(new \App\Mail\ReviewReceivedMail(
+                            $ownerName,
+                            $reviewer->name,
+                            $targetName,
+                            $validated['rating'],
+                            $validated['comment']
+                        ));
+                }
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send review received email: ' . $e->getMessage());
+        }
+
         return back()->with('success', 'Your review has been submitted successfully.');
     }
 
