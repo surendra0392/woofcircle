@@ -499,6 +499,24 @@ class AdminLitterController
             'message' => "The puppy transfer request for puppy '{$transferRequest->pet_name}' has been approved and completed by Admin.",
         ]);
 
+        try {
+            $buyer = $transferRequest->buyer;
+            $breeder = $transferRequest->breeder;
+            if ($buyer && $buyer->email) {
+                \Illuminate\Support\Facades\Mail::to($buyer->email)
+                    ->send(new \App\Mail\TransferRequestStatusMail(
+                        $buyer->name,
+                        $breeder?->name ?? 'Breeder',
+                        $transferRequest->pet_name,
+                        'approved'
+                    ));
+                \Illuminate\Support\Facades\Mail::to($buyer->email)
+                    ->send(new \App\Mail\PetAddedMail($buyer->name, $pet));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send admin transfer approval email: ' . $e->getMessage());
+        }
+
         return back()->with('success', 'Puppy transfer request approved and puppy profile successfully created.');
     }
 
@@ -553,6 +571,22 @@ class AdminLitterController
             'title' => 'Puppy Transfer Rejected by Admin',
             'message' => "The puppy transfer request for puppy '{$transferRequest->pet_name}' has been rejected by Admin.",
         ]);
+
+        try {
+            $buyer = $transferRequest->buyer;
+            $breeder = $transferRequest->breeder;
+            if ($buyer && $buyer->email) {
+                \Illuminate\Support\Facades\Mail::to($buyer->email)
+                    ->send(new \App\Mail\TransferRequestStatusMail(
+                        $buyer->name,
+                        $breeder?->name ?? 'Breeder',
+                        $transferRequest->pet_name,
+                        'rejected'
+                    ));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send admin transfer rejection email: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Transfer request rejected by Admin.');
     }
