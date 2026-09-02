@@ -20,23 +20,27 @@ class SendTestMailCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Send a test email using the configured SMTP mailer';
+    protected $description = 'Send a real-time test email using the configured SMTP mailer';
 
     /**
      * Execute the console command.
      */
     public function handle(): int
     {
-        $email = $this->argument('email') ?? 'surendra0392@gmail.com';
+        $email = $this->argument('email') ?? 'surendrakoneru0392@gmail.com';
 
-        $this->info("Sending test luxury email to: {$email}...");
+        $this->info("SMTP Host: " . config('mail.mailers.smtp.host') . ":" . config('mail.mailers.smtp.port') . " (" . config('mail.mailers.smtp.scheme', config('mail.mailers.smtp.encryption')) . ")");
+        $this->info("From Address: " . config('mail.from.address') . " (" . config('mail.from.name') . ")");
+        $this->info("Sending instant test email to: {$email}...");
 
         try {
-            Mail::to($email)->send(new NewsletterWelcomeMail('Surendra', $email, 'test-token-' . time()));
-            $this->info("✅ Test email sent successfully! Please check your inbox (and spam folder).");
+            // Send synchronously in real-time bypassing queue
+            Mail::to($email)->sendNow(new NewsletterWelcomeMail('Surendra', $email, 'test-token-' . time()));
+            $this->info("✅ Test email sent successfully to {$email}! Please check your inbox (and spam folder).");
             return Command::SUCCESS;
         } catch (\Throwable $e) {
-            $this->error("❌ Failed to send test email: " . $e->getMessage());
+            $this->error("❌ SMTP Error: " . $e->getMessage());
+            $this->line("File: " . $e->getFile() . ":" . $e->getLine());
             return Command::FAILURE;
         }
     }
