@@ -112,6 +112,22 @@ class ChatController
 
         broadcast(new MessageSent($message->load('sender', 'attachments')))->toOthers();
 
+        try {
+            $sender = \App\Models\User::find($userId);
+            $recipient = $conversation->users()->where('users.id', '!=', $userId)->first();
+            if ($sender && $recipient && $recipient->email) {
+                \Illuminate\Support\Facades\Mail::to($recipient->email)
+                    ->send(new \App\Mail\DirectMessageNotificationMail(
+                        $recipient->name,
+                        $sender->name,
+                        \Illuminate\Support\Str::limit(strip_tags($body ?? ''), 160),
+                        route('dashboard.messages.show', $conversation->id)
+                    ));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send direct message email: ' . $e->getMessage());
+        }
+
         return $message;
     }
 
@@ -314,6 +330,22 @@ class ChatController
         $message->load('sender', 'attachments');
 
         broadcast(new MessageSent($message))->toOthers();
+
+        try {
+            $sender = $request->user();
+            $recipient = $conversation->users()->where('users.id', '!=', $sender->id)->first();
+            if ($sender && $recipient && $recipient->email) {
+                \Illuminate\Support\Facades\Mail::to($recipient->email)
+                    ->send(new \App\Mail\DirectMessageNotificationMail(
+                        $recipient->name,
+                        $sender->name,
+                        \Illuminate\Support\Str::limit(strip_tags($request->body ?? 'Shared an attachment'), 160),
+                        route('dashboard.messages.show', $conversation->id)
+                    ));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send direct message email: ' . $e->getMessage());
+        }
 
         if ($request->wantsJson()) {
             return response()->json($message);

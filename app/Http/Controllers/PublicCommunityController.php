@@ -133,6 +133,16 @@ class PublicCommunityController
             'status' => 'confirmed',
         ]);
 
+        try {
+            $user = auth()->user();
+            if ($user && $user->email) {
+                \Illuminate\Support\Facades\Mail::to($user->email)
+                    ->send(new \App\Mail\EventRegistrationConfirmationMail($user->name, $event));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send event registration email: ' . $e->getMessage());
+        }
+
         return back()->with('success', 'You have successfully registered for the event!');
     }
 

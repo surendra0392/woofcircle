@@ -80,6 +80,15 @@ class UserPetController
         // Award karma points
         $user->increment('karma_points', 10);
 
+        try {
+            if ($user->email) {
+                \Illuminate\Support\Facades\Mail::to($user->email)
+                    ->send(new \App\Mail\PetAddedMail($user->name, $pet));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send pet added email: ' . $e->getMessage());
+        }
+
         return redirect()->route('pets.index')->with('success', 'Pet added successfully.');
     }
 
