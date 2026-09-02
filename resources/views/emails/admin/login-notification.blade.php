@@ -1,22 +1,23 @@
-<x-mail::message>
-# Admin Login Detected
+@extends('emails.layout')
 
-Hello,
+@section('content')
+    <h2>Security Alert: Admin Login Detected 🛡️</h2>
 
-A successful login to the Admin Panel was detected for your account.
+    <p>Hello {{ $admin->name ?? 'Administrator' }},</p>
+    <p>A successful login to the <strong>WoofCircle Administration Portal</strong> was detected for your account.</p>
 
-**Details:**
-- **Account:** {{ $admin->email }}
-- **IP Address:** {{ $ip }}
-- **Time:** {{ $time }}
-- **Browser:** {{ $userAgent }}
+    <div class="info-box">
+        <p><strong>Account Email:</strong> {{ $admin->email }}</p>
+        <p><strong>IP Address:</strong> {{ $ip }}</p>
+        <p><strong>Login Time:</strong> {{ $time }}</p>
+        <p><strong>Browser / Device:</strong> {{ $userAgent }}</p>
+    </div>
 
-If this was not you, please reset your password immediately and contact technical support.
+    <p style="font-size: 13px; color: #666;">
+        If this was you, you can safely ignore this notification. If you did not perform this login, please change your password immediately and contact security support.
+    </p>
 
-<x-mail::button :url="config('app.url') . '/admin/dashboard'">
-Go to Dashboard
-</x-mail::button>
-
-Thanks,<br>
-{{ config('app.name') }} Security Team
-</x-mail::message>
+    <div style="text-align: center;">
+        <a href="{{ rtrim(config('app.url', 'https://woofcircle.in'), '/') . '/admin/dashboard' }}" class="btn">Admin Control Center</a>
+    </div>
+@endsection
