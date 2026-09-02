@@ -200,6 +200,87 @@ class SettingSeeder extends Seeder
                 'group' => 'pricing',
             ],
 
+            // WhatsApp Business API (Meta Cloud API)
+            [
+                'key' => 'whatsapp_enabled',
+                'label' => 'Enable WhatsApp Notifications',
+                'value' => '0',
+                'type' => 'boolean',
+                'group' => 'whatsapp',
+            ],
+            [
+                'key' => 'whatsapp_phone_number_id',
+                'label' => 'Meta Phone Number ID',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'whatsapp',
+            ],
+            [
+                'key' => 'whatsapp_business_account_id',
+                'label' => 'Meta WhatsApp Business Account ID (WABA ID)',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'whatsapp',
+            ],
+            [
+                'key' => 'whatsapp_access_token',
+                'label' => 'Meta Permanent Access Token',
+                'value' => '',
+                'type' => 'textarea',
+                'group' => 'whatsapp',
+            ],
+            [
+                'key' => 'whatsapp_sender_phone',
+                'label' => 'Sender WhatsApp Phone Number (e.g. +91 9876543210)',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'whatsapp',
+            ],
+
+            // Push Notifications (OneSignal & Firebase)
+            [
+                'key' => 'push_enabled',
+                'label' => 'Enable Push Notifications',
+                'value' => '0',
+                'type' => 'boolean',
+                'group' => 'push_notifications',
+            ],
+            [
+                'key' => 'push_provider',
+                'label' => 'Push Service Provider (onesignal or firebase)',
+                'value' => 'onesignal',
+                'type' => 'text',
+                'group' => 'push_notifications',
+            ],
+            [
+                'key' => 'onesignal_app_id',
+                'label' => 'OneSignal App ID',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'push_notifications',
+            ],
+            [
+                'key' => 'onesignal_rest_api_key',
+                'label' => 'OneSignal REST API Key',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'push_notifications',
+            ],
+            [
+                'key' => 'firebase_project_id',
+                'label' => 'Firebase Project ID',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'push_notifications',
+            ],
+            [
+                'key' => 'firebase_server_key',
+                'label' => 'Firebase Server Key / VAPID Key',
+                'value' => '',
+                'type' => 'textarea',
+                'group' => 'push_notifications',
+            ],
+
         ];
 
         foreach ($settings as $setting) {

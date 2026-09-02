@@ -196,6 +196,23 @@ class BreederHealthRecordController
                         'pending_admin'
                     ));
             }
+
+            // WhatsApp & Push to buyer
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($buyer?->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $buyer->mobile_number,
+                        "🐾 *WoofCircle Puppy Transfer Update*\n\nBreeder {$breeder->name} has approved the transfer of puppy *'{$transferRequest->pet_name}'*. It is now submitted for final Admin verification."
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled() && $buyer) {
+                    $pushService->sendToUser($buyer->id, "Puppy Transfer Approved by Breeder 🐾", "Transfer of '{$transferRequest->pet_name}' is progressing to final Admin verification.", route('dashboard'));
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp/Push transfer notification error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send transfer approval email: ' . $e->getMessage());
         }
@@ -253,6 +270,23 @@ class BreederHealthRecordController
                         $transferRequest->pet_name,
                         'rejected'
                     ));
+            }
+
+            // WhatsApp & Push to buyer
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($buyer?->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $buyer->mobile_number,
+                        "🐾 *WoofCircle Puppy Transfer Update*\n\nThe transfer request for puppy *'{$transferRequest->pet_name}'* was not accepted by the breeder."
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled() && $buyer) {
+                    $pushService->sendToUser($buyer->id, "Puppy Transfer Update", "Transfer request for '{$transferRequest->pet_name}' was declined by breeder.", route('dashboard'));
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp/Push transfer notification error: ' . $e->getMessage());
             }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send transfer rejection email: ' . $e->getMessage());

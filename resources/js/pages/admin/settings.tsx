@@ -106,6 +106,20 @@ export default function SettingsPage({ groupedSettings }: PageProps) {
         }
     };
 
+    const formatGroupName = (group: string) => {
+        const labels: Record<string, string> = {
+            general: 'General & Branding',
+            contact: 'Contact & Concierge',
+            social: 'Social Networks',
+            seo: 'SEO & Metadata',
+            payment: 'Payment Gateways',
+            pricing: 'Pricing Tiers',
+            whatsapp: 'WhatsApp Business API',
+            push_notifications: 'Push Notifications',
+        };
+        return labels[group] || group.charAt(0).toUpperCase() + group.slice(1).replace(/_/g, ' ');
+    };
+
     return (
         <AdminLayout title="Platform Settings">
             <Head title="Settings" />
@@ -118,7 +132,7 @@ export default function SettingsPage({ groupedSettings }: PageProps) {
                     </div>
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight text-woof-charcoal">Platform Settings</h2>
-                        <p className="text-xs text-woof-charcoal/60">Configure global site parameters, system branding, logos, and contact details</p>
+                        <p className="text-xs text-woof-charcoal/60">Configure global site parameters, system branding, WhatsApp Meta Cloud API, and OneSignal Push credentials</p>
                     </div>
                 </div>
 
@@ -126,13 +140,14 @@ export default function SettingsPage({ groupedSettings }: PageProps) {
                     {Object.keys(groupedSettings || {}).length > 0 && (
                         <Tabs defaultValue={Object.keys(groupedSettings)[0]} className="w-full">
                             <div className="overflow-x-auto pb-3">
-                                <TabsList>
+                                <TabsList className="gap-1.5 p-1.5">
                                     {Object.keys(groupedSettings).map((groupName) => (
                                         <TabsTrigger
                                             key={groupName}
                                             value={groupName}
+                                            className="text-xs font-semibold px-4 py-2"
                                         >
-                                            {groupName}
+                                            {formatGroupName(groupName)}
                                         </TabsTrigger>
                                     ))}
                                 </TabsList>
@@ -141,9 +156,19 @@ export default function SettingsPage({ groupedSettings }: PageProps) {
                             {Object.entries(groupedSettings || {}).map(([groupName, groupSettings]) => (
                                 <TabsContent key={groupName} value={groupName} className="mt-6 outline-none focus:outline-none">
                                     <div className="rounded-3xl border border-[#e8ded1] bg-white p-6 sm:p-8 shadow-xs">
-                                        <h3 className="mb-6 border-b border-[#f0e8dc] pb-4 text-sm font-bold text-woof-charcoal">
-                                            {groupName} Settings
-                                        </h3>
+                                        <div className="mb-6 border-b border-[#f0e8dc] pb-4 flex items-center justify-between">
+                                            <div>
+                                                <h3 className="text-sm font-bold text-woof-charcoal">
+                                                    {formatGroupName(groupName)} Settings
+                                                </h3>
+                                                {groupName === 'whatsapp' && (
+                                                    <p className="text-xs text-woof-charcoal/60 mt-0.5">Configure Meta Cloud API credentials to enable automated WhatsApp notifications</p>
+                                                )}
+                                                {groupName === 'push_notifications' && (
+                                                    <p className="text-xs text-woof-charcoal/60 mt-0.5">Configure OneSignal or Firebase Cloud Messaging for Web and Mobile Push alerts</p>
+                                                )}
+                                            </div>
+                                        </div>
                                         
                                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                             {groupSettings.map((setting) => (

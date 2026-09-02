@@ -129,8 +129,40 @@ class BookingController extends Controller
                         $start->format('M d, Y h:i A') . ' - ' . $end->format('h:i A')
                     ));
             }
+
+            // WhatsApp notifications
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled()) {
+                    $slotTime = $start->format('M d, Y h:i A');
+                    if (!empty($user->mobile_number)) {
+                        $userMsg = "📅 *WoofCircle Booking Confirmed*\n\nHello {$user->name}, your appointment with *{$providerName}* is scheduled for *{$slotTime}*.\n\nView details: " . route('dashboard');
+                        $whatsAppService->sendTextMessage($user->mobile_number, $userMsg);
+                    }
+                    $providerPhone = $providerModel->phone ?? $providerModel->mobile_number ?? $providerModel->user?->mobile_number ?? null;
+                    if ($providerPhone) {
+                        $provMsg = "🔔 *New WoofCircle Appointment*\n\n*{$user->name}* has booked a slot on *{$slotTime}*.\n\nView bookings: " . route('dashboard');
+                        $whatsAppService->sendTextMessage($providerPhone, $provMsg);
+                    }
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp booking notification error: ' . $e->getMessage());
+            }
+
+            // Push notifications
+            try {
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled()) {
+                    $pushService->sendToUser($user->id, "Booking Confirmed 📅", "Your appointment with {$providerName} is set for {$start->format('M d, h:i A')}.", route('dashboard'));
+                    if ($providerModel->user_id) {
+                        $pushService->sendToUser($providerModel->user_id, "New Appointment Request 🔔", "{$user->name} has booked a slot for {$start->format('M d, h:i A')}.", route('dashboard'));
+                    }
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Push booking notification error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Failed to send booking emails: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::warning('Failed to send booking notifications: ' . $e->getMessage());
         }
 
         return response()->json(['message' => 'Booking successful']);

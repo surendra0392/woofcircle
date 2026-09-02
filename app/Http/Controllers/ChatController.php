@@ -343,6 +343,21 @@ class ChatController
                         route('dashboard.messages.show', $conversation->id)
                     ));
             }
+
+            // Web/Mobile Push notification
+            try {
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled() && $recipient) {
+                    $pushService->sendToUser(
+                        $recipient->id,
+                        "New message from {$sender->name} 💬",
+                        \Illuminate\Support\Str::limit(strip_tags($request->body ?? 'Shared an attachment'), 80),
+                        route('dashboard.messages.show', $conversation->id)
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Push chat notification error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send direct message email: ' . $e->getMessage());
         }

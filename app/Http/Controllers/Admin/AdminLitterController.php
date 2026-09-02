@@ -513,6 +513,23 @@ class AdminLitterController
                 \Illuminate\Support\Facades\Mail::to($buyer->email)
                     ->send(new \App\Mail\PetAddedMail($buyer->name, $pet));
             }
+
+            // WhatsApp & Push to buyer
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($buyer?->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $buyer->mobile_number,
+                        "🎉 *WoofCircle Puppy Transfer Complete!*\n\nCongratulations! The secure transfer of puppy *'{$transferRequest->pet_name}'* has been officially verified by Admin. The digital passport is now live on your dashboard:\n" . route('pets.passport.show', $pet->passport_number ?? $pet->id)
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled() && $buyer) {
+                    $pushService->sendToUser($buyer->id, "Puppy Transfer Verified 🎉", "Puppy '{$transferRequest->pet_name}' is now registered to your dashboard.", route('dashboard'));
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp/Push admin transfer notification error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send admin transfer approval email: ' . $e->getMessage());
         }
@@ -583,6 +600,23 @@ class AdminLitterController
                         $transferRequest->pet_name,
                         'rejected'
                     ));
+            }
+
+            // WhatsApp & Push to buyer
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($buyer?->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $buyer->mobile_number,
+                        "🐾 *WoofCircle Puppy Transfer Update*\n\nThe transfer request for puppy *'{$transferRequest->pet_name}'* was not approved by Admin."
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled() && $buyer) {
+                    $pushService->sendToUser($buyer->id, "Puppy Transfer Status", "Transfer request for '{$transferRequest->pet_name}' was not approved.", route('dashboard'));
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp/Push admin transfer rejection error: ' . $e->getMessage());
             }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send admin transfer rejection email: ' . $e->getMessage());

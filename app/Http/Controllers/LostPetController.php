@@ -122,6 +122,42 @@ class LostPetController extends Controller
 
             if ($users->isNotEmpty()) {
                 Notification::send($users, new LostPetAlertNotification($pet));
+
+                // Dispatch WhatsApp to nearby users with phone numbers
+                try {
+                    $whatsAppService = app(\App\Services\WhatsAppService::class);
+                    if ($whatsAppService->isEnabled()) {
+                        $waMsg = "🚨 *URGENT LOST DOG ALERT: {$pet->name}*\n\n" .
+                                 "A {$pet->breed?->name} named *{$pet->name}* was just reported missing near {$pet->lost_location}.\n\n" .
+                                 "If spotted, please view details or contact the pet parent immediately:\n" .
+                                 url('/lost-pets');
+
+                        foreach ($users as $nearbyUser) {
+                            if (!empty($nearbyUser->mobile_number)) {
+                                $whatsAppService->sendTextMessage($nearbyUser->mobile_number, $waMsg);
+                            }
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('WhatsApp Lost Pet Alert error: ' . $e->getMessage());
+                }
+            }
+
+            // Dispatch Geo-targeted Web & Mobile Push Notification
+            try {
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled()) {
+                    $pushService->broadcastNearby(
+                        (float) $lat,
+                        (float) $lng,
+                        5.0,
+                        "🚨 LOST DOG RADAR: {$pet->name}",
+                        "A {$pet->breed?->name} named '{$pet->name}' was reported missing near {$pet->lost_location}. Tap to view photo & contact details.",
+                        url('/lost-pets')
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Push Notification Lost Pet error: ' . $e->getMessage());
             }
         }
 
