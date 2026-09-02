@@ -1,0 +1,109 @@
+<?php
+
+// PHPStan stub: defines the magical methods and properties that Pest's
+// TestCall mixin provides. Without this stub, PHPStan reports all Pest
+// test helpers (actingAs, get, post, etc.) and test-scope variables
+// ($admin, $state, $city ...) as undefined — ~800 lines of noise.
+
+namespace Pest\PendingCalls;
+
+use Closure;
+use PHPUnit\Framework\TestCase;
+
+class TestCall
+{
+    /**
+     * The test case instance.
+     * @var TestCase
+     */
+    public $testCase;
+
+    /**
+     * @param TestCase $testCase
+     * @param Closure $callback
+     */
+    public function __construct(TestCase $testCase, Closure $callback) {}
+
+    // ── Magical HTTP and Database helpers ──────────────────────────────
+
+    /** @return $this */
+    public function actingAs($user, ?string $guard = null): self { return $this; }
+
+    /** @return $this */
+    public function get(string $uri, array $headers = []): self { return $this; }
+
+    /** @return $this */
+    public function post(string $uri, array $data = [], array $headers = []): self { return $this; }
+
+    /** @return $this */
+    public function seed(string $seederClass = ''): self { return $this; }
+
+    /** @return $this */
+    public function assertDatabaseHas(string $table, array $data, ?string $connection = null): self { return $this; }
+
+    /** @return $this */
+    public function assertDatabaseMissing(string $table, array $data, ?string $connection = null): self { return $this; }
+
+    /** @return $this */
+    public function assertNotNull(mixed $actual, string $message = ''): self { return $this; }
+
+    /** @return $this */
+    public function assertGuest(?string $guard = null): self { return $this; }
+
+    /** @return $this */
+    public function assertEquals(mixed $expected, mixed $actual, string $message = ''): self { return $this; }
+
+    // ── Magical test-scope properties (set via `beforeEach`) ──────────
+
+    /** @var mixed */
+    public $admin;
+
+    /** @var mixed */
+    public $user;
+
+    /** @var mixed */
+    public $state;
+
+    /** @var mixed */
+    public $city;
+
+    /** @var mixed */
+    public $pet;
+
+    /** @var mixed */
+    public $breed;
+
+    /** @var mixed */
+    public $category;
+
+    /** @var mixed */
+    public $eventType;
+
+    /** @var mixed */
+    public $specialization;
+
+    /** @var mixed */
+    public $service;
+
+    /** @var mixed */
+    public $author;
+
+    /**
+     * @param string $method
+     * @param array<mixed> $parameters
+     * @return mixed
+     */
+    public function __call(string $method, array $parameters) {}
+
+    /**
+     * @param string $property
+     * @return mixed
+     */
+    public function __get(string $property) {}
+
+    /**
+     * @param string $property
+     * @param mixed $value
+     */
+    public function __set(string $property, $value) {}
+}

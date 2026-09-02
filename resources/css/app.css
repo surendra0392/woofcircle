@@ -1,0 +1,266 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/typography';
+@plugin 'tailwindcss-animate';
+
+@theme {
+    /* --- CINEMATIC TYPOGRAPHY SYSTEM --- */
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    --font-serif: 'Outfit', serif;
+
+    /* --- ORGANIC BOUTIQUE GEOMETRY --- */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 24px;
+    --radius-3xl: 32px;
+    --radius-full: 9999px;
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    /* --- BRAND PALETTE (PURPLE BAN ENFORCED) --- */
+    --color-woof-charcoal: #24221c;
+    --color-woof-forest: #061d10;
+    --color-woof-gold: #bb8b62;
+    --color-woof-pearl: #deb893;
+    --color-woof-champagne: #c89d74;
+    --color-woof-cream: #f9f6f2;
+
+    /* --- CONTRAST TOKENS (ON DARK) --- */
+    --color-woof-on-dark: #ffffff;
+    --color-woof-on-dark-muted: rgba(255, 255, 255, 0.9);
+    --color-woof-on-dark-subtle: rgba(255, 255, 255, 0.75);
+
+    /* --- ANIMATIONS --- */
+    @keyframes marquee {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+    --animate-marquee: marquee 30s linear infinite;
+}
+
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: rgba(36, 34, 28, 0.1);
+    }
+}
+
+:root {
+    --background: #fcfbf9;
+    --foreground: #24221c;
+
+    --card: #ffffff;
+    --card-foreground: #24221c;
+
+    --popover: #ffffff;
+    --popover-foreground: #24221c;
+
+    --primary: #24221c;
+    --primary-foreground: #ffffff;
+
+    --secondary: #fcfbf9;
+    --secondary-foreground: #24221c;
+
+    --muted: #fcfbf9;
+    --muted-foreground: #61584a;
+
+    --accent: #fcfbf9;
+    --accent-foreground: #24221c;
+
+    --destructive: #e11d48;
+    --destructive-foreground: #ffffff;
+
+    --border: #e8ded1;
+    --input: #e8ded1;
+    --ring: #bb8b62;
+
+    --radius: 16px;
+}
+
+@utility container-wide {
+    @apply mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-12;
+}
+
+@utility text-balance {
+    text-wrap: balance;
+}
+
+@utility cinematic-shadow {
+    box-shadow:
+        0 20px 40px -12px rgba(36, 34, 28, 0.08),
+        0 8px 16px -8px rgba(36, 34, 28, 0.06);
+}
+
+@utility glass-card {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(232, 222, 209, 0.8);
+    border-radius: 1.25rem;
+}
+
+@utility luxury-card {
+    background: #ffffff;
+    border: 1px solid #e8ded1;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 20px -2px rgba(36, 34, 28, 0.04);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@utility luxury-card-hover {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    &:hover {
+        transform: translateY(-2px);
+        border-color: rgba(187, 139, 98, 0.4);
+        box-shadow: 0 12px 30px -4px rgba(187, 139, 98, 0.12);
+    }
+}
+
+@utility badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: 9999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-[#fcfbf9] text-woof-charcoal font-sans antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply text-woof-charcoal font-sans font-bold tracking-tight;
+    }
+}
+
+/* Force light mode only */
+:root {
+    color-scheme: light !important;
+}
+
+/* Prevent scrollbar hiding and page layout shifting when Radix UI dropdowns/selects are open */
+html {
+    overflow-y: scroll !important;
+}
+
+html body[data-scroll-locked],
+body[data-scroll-locked] {
+    overflow: visible !important;
+    margin-right: 0px !important;
+    padding-right: 0px !important;
+    --removed-body-scroll-bar-size: 0px !important;
+}
+
+/* Force cursor pointer on hover for interactive elements */
+button,
+[type='button'],
+[type='reset'],
+[type='submit'],
+select,
+[role='button'],
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+/* ── Utility Animations (lightweight replacements for framer-motion) ── */
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.5s cubic-bezier(0.21, 0.45, 0.32, 0.9) both;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.3s ease-out both;
+}
+
+@keyframes fade-in-left {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in-left {
+    animation: fade-in-left 0.4s cubic-bezier(0.21, 0.45, 0.32, 0.9) both;
+}
+
+@keyframes slide-in-right {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.animate-slide-in-right {
+    animation: slide-in-right 0.4s cubic-bezier(0.21, 0.45, 0.32, 0.9) both;
+}
+
+@keyframes scale-in {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.animate-scale-in {
+    animation: scale-in 0.4s cubic-bezier(0.21, 0.45, 0.32, 0.9) both;
+}

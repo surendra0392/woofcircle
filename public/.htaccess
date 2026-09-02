@@ -1,0 +1,43 @@
+<IfModule mod_headers.c>
+    # Security Headers
+    # Previously handled by App\Http\Middleware\SecurityHeaders (removed — static headers moved here)
+    # If deploying behind Nginx, add equivalent `add_header` directives in the server block.
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=()"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+## ─── Nginx Equivalent (if migrating from Apache) ───
+## Place inside your server block / location block:
+#
+# add_header X-Frame-Options "SAMEORIGIN" always;
+# add_header X-Content-Type-Options "nosniff" always;
+# add_header X-XSS-Protection "1; mode=block" always;
+# add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+# add_header Permissions-Policy "geolocation=(), microphone=()" always;
+# add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;

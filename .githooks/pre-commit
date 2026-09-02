@@ -1,0 +1,93 @@
+#!/bin/sh
+#
+# Pre-commit hook: runs PHP syntax check + fast unit tests before every commit.
+# If either fails, the commit is aborted.
+#
+# Install: git config core.hooksPath .githooks
+
+# ── 1. PHP syntax check on staged .php files ──────────────────────────────
+
+echo "🔍 Checking PHP syntax on staged files..."
+
+STAGED_PHP=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.php$' || true)
+
+if [ -n "$STAGED_PHP" ]; then
+    HAS_ERRORS=0
+    for FILE in $STAGED_PHP; do
+        if [ -f "$FILE" ] && ! php -l "$FILE" > /dev/null 2>&1; then
+            echo "❌ Syntax error in $FILE:"
+            php -l "$FILE"
+            HAS_ERRORS=1
+        fi
+    done
+
+    if [ "$HAS_ERRORS" -ne 0 ]; then
+        echo ""
+        echo "❌ PHP syntax errors found. Commit aborted."
+        echo "   Fix the errors above or skip checks with: git commit --no-verify"
+        exit 1
+    fi
+fi
+
+echo "✅ PHP syntax check passed."
+
+# ── 2. TypeScript type check on staged .ts/.tsx files ────────────────────
+
+echo "🔎 Checking TypeScript types on staged files..."
+
+STAGED_TS=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(ts|tsx)$' || true)
+
+if [ -n "$STAGED_TS" ]; then
+    if ! npx -y tsc --noEmit 2>&1; then
+        echo ""
+        echo "❌ TypeScript type errors found. Commit aborted."
+        echo "   Fix the errors above or skip checks with: git commit --no-verify"
+        exit 1
+    fi
+    echo "✅ TypeScript type check passed."
+else
+    echo "⏭️  No TypeScript files staged, skipping type check."
+fi
+
+# ── 3. PHPStan quick scan on staged .php files ───────────────────────────
+
+echo "🧐 Running PHPStan quick scan on staged files..."
+
+if [ -n "$STAGED_PHP" ]; then
+    # Use a minimal config (no Larastan, no baseline, level 1) for speed.
+    # Note: ~8s cold start on Windows even for one file due to PHPStan's
+    # reflection-database overhead. Only runs when .php files are staged.
+    if ! vendor/bin/phpstan analyse --no-progress -c phpstan.pre-commit.neon $STAGED_PHP 2>&1; then
+        echo ""
+        echo "❌ PHPStan found errors. Commit aborted."
+        echo "   Fix the errors above or skip checks with: git commit --no-verify"
+        exit 1
+    fi
+    echo "✅ PHPStan quick scan passed."
+else
+    echo "⏭️  No PHP files staged, skipping PHPStan scan."
+fi
+
+# ── 4. Fast unit tests ────────────────────────────────────────────────────
+
+echo "🧪 Running unit tests before commit..."
+
+# Run the fast unit tests via composer script (handles Windows & Unix)
+# Tests: TypeResolver + ProfileConfig — pure logic, ~1s total
+composer test:unit 2>&1
+
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ Unit tests failed. Commit aborted."
+    echo "   Fix the failures or skip checks with: git commit --no-verify"
+    exit 1
+fi
+
+echo "✅ Unit tests passed."
+
+# ── 4. Done ───────────────────────────────────────────────────────────────
+
+echo "🎉 All pre-commit checks passed. Proceeding with commit."
+exit 0

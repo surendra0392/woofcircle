@@ -1,0 +1,6 @@
+{
+    "1124334": {
+        "active": false,
+        "notes": "brace-expansion CVE (DoS via unbounded expansion). Dev-only toolchain dependency, no production impact. brace-expansion@5.0.8 installed which is outside the <=5.0.7 vulnerable range, but npm advisory database hasn't recognized 5.0.8 as a fix yet."
+    }
+}

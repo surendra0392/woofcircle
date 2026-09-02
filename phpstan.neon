@@ -1,0 +1,15 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    paths:
+        - app/
+        - config/
+        - tests/
+    level: 5
+    tmpDir: .phpstan-cache
+    scanFiles:
+        - stubs/PestTestCall.stub
+        - _ide_helper_models.php
+    reportUnmatchedIgnoredErrors: false
