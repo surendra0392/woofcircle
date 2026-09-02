@@ -621,6 +621,22 @@ class MarketplaceController
             'message' => "{$user->name} has requested to secure puppy {$validated['pet_name']} from your litter: {$litter->title}.",
         ]);
 
+        try {
+            $breeder = $litter->user;
+            if ($breeder && $breeder->email) {
+                \Illuminate\Support\Facades\Mail::to($breeder->email)
+                    ->send(new \App\Mail\TransferRequestNotificationMail(
+                        $breeder->name,
+                        $litter->title,
+                        $user->name,
+                        $user->email,
+                        "Requested Puppy: {$validated['pet_name']} ({$validated['gender']})"
+                    ));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send puppy transfer request email: ' . $e->getMessage());
+        }
+
         return redirect()->back()->with('success', "Your secure transfer request has been sent to the breeder. Waiting for breeder's approval.");
     }
 }

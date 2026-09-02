@@ -25,6 +25,14 @@ class NewsletterController extends Controller
             $subscriber->subscribed_at = now();
             $subscriber->unsubscribed_at = null;
             $subscriber->save();
+
+            try {
+                $unsubscribeUrl = route('newsletter.unsubscribe', ['token' => $subscriber->token ?? 'default']);
+                \Illuminate\Support\Facades\Mail::to($subscriber->email)
+                    ->send(new \App\Mail\NewsletterWelcomeMail($subscriber->email, $unsubscribeUrl));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to send newsletter welcome email: ' . $e->getMessage());
+            }
             
             return back()->with('success', 'Thanks for subscribing to our newsletter!');
         }

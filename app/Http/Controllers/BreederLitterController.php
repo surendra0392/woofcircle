@@ -125,6 +125,13 @@ class BreederLitterController
             }
         }
 
+        try {
+            \Illuminate\Support\Facades\Mail::to($user->email)
+                ->send(new \App\Mail\LitterCreatedMail($user->name, $litter->load(['breed', 'city', 'state'])));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send litter created email: ' . $e->getMessage());
+        }
+
         return redirect()->route('breeder.litters.index')->with('success', 'Litter listing created and pending approval.');
     }
 

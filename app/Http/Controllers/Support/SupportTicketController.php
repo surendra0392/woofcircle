@@ -201,6 +201,22 @@ class SupportTicketController extends Controller
                 'admin_id' => auth('admin')->id(),
                 'message' => $request->message,
             ]);
+
+            try {
+                $ticket = SupportTicket::with('user')->find($id);
+                $admin = auth('admin')->user();
+                if ($ticket && $ticket->user && $ticket->user->email) {
+                    \Illuminate\Support\Facades\Mail::to($ticket->user->email)
+                        ->send(new \App\Mail\SupportTicketReplyMail(
+                            $ticket->user->name,
+                            $admin->name ?? 'Support Concierge',
+                            $ticket,
+                            $request->message
+                        ));
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to send ticket reply email: ' . $e->getMessage());
+            }
         } else {
             InternalTicketReply::create([
                 'internal_ticket_id' => $id,

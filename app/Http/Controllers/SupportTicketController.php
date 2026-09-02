@@ -72,10 +72,28 @@ class SupportTicketController
 
         // Broadcast updated unassigned count — new tickets start unassigned,
         // so the support portal's queue badge should reflect this immediately.
-        $freshUnassignedCount = SupportTicket::whereNull('assigned_to')
-            ->where('status', 'open')
-            ->count();
-        UnassignedTicketsCountChanged::dispatch($freshUnassignedCount);
+        try {
+            $freshUnassignedCount = SupportTicket::whereNull('assigned_to')
+                ->where('status', 'open')
+                ->count();
+            UnassignedTicketsCountChanged::dispatch($freshUnassignedCount);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to broadcast unassigned tickets count: ' . $e->getMessage());
+        }
+
+        try {
+            $user = auth()->user();
+            if ($user && $user->email) {
+                \Illuminate\Support\Facades\Mail::to($user->email)
+                    ->send(new \App\Mail\SupportTicketCreatedMail($user->name, $ticket));
+
+                $supportStaffEmail = config('mail.support_username', 'support@woofcircle.in');
+                \Illuminate\Support\Facades\Mail::to($supportStaffEmail)
+                    ->send(new \App\Mail\SupportTicketStaffAlertMail($user->name, $user->email, $ticket));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send support ticket emails: ' . $e->getMessage());
+        }
 
         return redirect()->route('dashboard.support.show', $ticket->id)
             ->with('success', 'Your support ticket has been created successfully.');

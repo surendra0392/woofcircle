@@ -45,7 +45,7 @@ class PublicCareerController
         // Store the resume securely in the public disk
         $path = $request->file('resume')->store('resumes', 'public');
 
-        CareerApplication::create([
+        $application = CareerApplication::create([
             'career_position_id' => $request->career_position_id,
             'full_name' => $request->full_name,
             'email' => $request->email,
@@ -58,6 +58,30 @@ class PublicCareerController
             'portfolio_url' => $request->portfolio_url,
             'status' => 'pending',
         ]);
+
+        try {
+            // Confirmation to applicant
+            \Illuminate\Support\Facades\Mail::to($request->email)
+                ->send(new \App\Mail\CareerApplicationConfirmationMail($request->full_name, $position));
+
+            // Alert to HR team
+            $hrEmail = config('mail.support_username', 'hr.manager@woofcircle.com');
+            \Illuminate\Support\Facades\Mail::to($hrEmail)
+                ->send(new \App\Mail\CareerApplicationReceivedMail(
+                    $request->full_name,
+                    $request->email,
+                    $request->phone,
+                    $position,
+                    $request->cover_letter,
+                    $request->experience_years,
+                    $request->current_company,
+                    $request->linkedin_url,
+                    $request->portfolio_url,
+                    $path
+                ));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send career application emails: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Your application for ' . $position->title . ' has been submitted successfully!');
     }

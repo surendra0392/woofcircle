@@ -92,7 +92,7 @@ class BookingController extends Controller
             return response()->json(['message' => 'Slot already booked'], 422);
         }
 
-        Booking::create([
+        $booking = Booking::create([
             'provider_type' => $request->provider_type,
             'provider_id' => $request->provider_id,
             'user_id' => auth()->id(),
@@ -100,6 +100,38 @@ class BookingController extends Controller
             'end_time' => $end,
             'status' => 'scheduled',
         ]);
+
+        try {
+            $user = auth()->user();
+            $providerModel = app($request->provider_type)->find($request->provider_id);
+            $providerName = $providerModel->name ?? $providerModel->clinic_name ?? $providerModel->shop_name ?? 'Provider';
+            $providerEmail = $providerModel->user?->email ?? $providerModel->email ?? null;
+
+            if ($user && $user->email) {
+                \Illuminate\Support\Facades\Mail::to($user->email)
+                    ->send(new \App\Mail\AppointmentBookedMail(
+                        $user->name,
+                        $providerName,
+                        'Your Pet',
+                        'Scheduled Slot Consultation',
+                        $start->format('M d, Y h:i A') . ' - ' . $end->format('h:i A')
+                    ));
+            }
+
+            if ($providerEmail) {
+                \Illuminate\Support\Facades\Mail::to($providerEmail)
+                    ->send(new \App\Mail\AppointmentReceivedMail(
+                        $providerName,
+                        $user->name,
+                        $user->email,
+                        'Pet Parent',
+                        'Scheduled Slot Consultation',
+                        $start->format('M d, Y h:i A') . ' - ' . $end->format('h:i A')
+                    ));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send booking emails: ' . $e->getMessage());
+        }
 
         return response()->json(['message' => 'Booking successful']);
     }

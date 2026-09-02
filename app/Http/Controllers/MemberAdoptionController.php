@@ -96,6 +96,11 @@ class MemberAdoptionController
             $validated['profile_type'] = null;
         }
 
+        if ($request->has('fee')) {
+            $validated['price'] = $validated['fee'];
+            unset($validated['fee']);
+        }
+
         $validated['user_id'] = $user->id;
         $validated['slug'] = Str::slug($validated['title']).'-'.Str::random(5);
         $validated['status'] = 'published';
@@ -117,6 +122,13 @@ class MemberAdoptionController
                     'sort_order' => $index,
                 ]);
             }
+        }
+
+        try {
+            \Illuminate\Support\Facades\Mail::to($user->email)
+                ->send(new \App\Mail\AdoptionCreatedMail($user->name, $adoption->load(['breed', 'city', 'state'])));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send adoption created email: ' . $e->getMessage());
         }
 
         return redirect()->route('dashboard.adoptions.index')->with('success', 'Adoption listing created and pending approval.');

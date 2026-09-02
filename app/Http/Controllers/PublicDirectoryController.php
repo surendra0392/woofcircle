@@ -288,8 +288,38 @@ class PublicDirectoryController
             Message::create([
                 'conversation_id' => $conversation->id,
                 'user_id' => $currentUserId,
-                'body' => $body ?? 'New appointment request.',
+                'body' => $validated['notes'] ? "New appointment request: {$validated['notes']}" : 'New appointment request.',
             ]);
+        }
+
+        try {
+            // Confirmation to pet parent
+            \Illuminate\Support\Facades\Mail::to($request->user()->email)
+                ->send(new \App\Mail\AppointmentBookedMail(
+                    $request->user()->name,
+                    $vet->name ?? $vet->clinic_name ?? 'Veterinary Clinic',
+                    $pet->name,
+                    $validated['appointment_type'],
+                    \Carbon\Carbon::parse($validated['appointment_date'])->format('M d, Y h:i A'),
+                    $validated['notes']
+                ));
+
+            // Alert to Vet
+            $vetEmail = $vet->user?->email ?? $vet->email;
+            if ($vetEmail) {
+                \Illuminate\Support\Facades\Mail::to($vetEmail)
+                    ->send(new \App\Mail\AppointmentReceivedMail(
+                        $vet->name ?? $vet->clinic_name ?? 'Veterinary Clinic',
+                        $request->user()->name,
+                        $request->user()->email,
+                        $pet->name,
+                        $validated['appointment_type'],
+                        \Carbon\Carbon::parse($validated['appointment_date'])->format('M d, Y h:i A'),
+                        $validated['notes']
+                    ));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send appointment emails: ' . $e->getMessage());
         }
 
         return back()->with('success', 'Appointment request sent successfully!');
@@ -410,8 +440,38 @@ class PublicDirectoryController
             Message::create([
                 'conversation_id' => $conversation->id,
                 'user_id' => $currentUserId,
-                'body' => $body ?? 'New training session request.',
+                'body' => $validated['notes'] ? "New training session request: {$validated['notes']}" : 'New training session request.',
             ]);
+        }
+
+        try {
+            // Confirmation to pet parent
+            \Illuminate\Support\Facades\Mail::to($request->user()->email)
+                ->send(new \App\Mail\AppointmentBookedMail(
+                    $request->user()->name,
+                    $trainer->name ?? 'Professional Trainer',
+                    $pet->name,
+                    'Training: ' . $validated['session_type'],
+                    \Carbon\Carbon::parse($validated['session_date'])->format('M d, Y h:i A'),
+                    $validated['notes']
+                ));
+
+            // Alert to Trainer
+            $trainerEmail = $trainer->user?->email ?? $trainer->email;
+            if ($trainerEmail) {
+                \Illuminate\Support\Facades\Mail::to($trainerEmail)
+                    ->send(new \App\Mail\AppointmentReceivedMail(
+                        $trainer->name ?? 'Professional Trainer',
+                        $request->user()->name,
+                        $request->user()->email,
+                        $pet->name,
+                        'Training: ' . $validated['session_type'],
+                        \Carbon\Carbon::parse($validated['session_date'])->format('M d, Y h:i A'),
+                        $validated['notes']
+                    ));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send trainer booking emails: ' . $e->getMessage());
         }
 
         return back()->with('success', 'Training session request sent successfully!');
@@ -530,8 +590,38 @@ class PublicDirectoryController
             Message::create([
                 'conversation_id' => $conversation->id,
                 'user_id' => $currentUserId,
-                'body' => $body ?? 'New boarding reservation request.',
+                'body' => $validated['notes'] ? "New boarding reservation request: {$validated['notes']}" : 'New boarding reservation request.',
             ]);
+        }
+
+        try {
+            // Confirmation to pet parent
+            \Illuminate\Support\Facades\Mail::to($request->user()->email)
+                ->send(new \App\Mail\AppointmentBookedMail(
+                    $request->user()->name,
+                    $boarding->name ?? 'Boarding & Daycare Sanctuary',
+                    $pet->name,
+                    'Boarding / Daycare Stay',
+                    \Carbon\Carbon::parse($validated['check_in_date'])->format('M d, Y') . ' to ' . \Carbon\Carbon::parse($validated['check_out_date'])->format('M d, Y'),
+                    $validated['notes']
+                ));
+
+            // Alert to Boarding facility
+            $boardingEmail = $boarding->user?->email ?? $boarding->email;
+            if ($boardingEmail) {
+                \Illuminate\Support\Facades\Mail::to($boardingEmail)
+                    ->send(new \App\Mail\AppointmentReceivedMail(
+                        $boarding->name ?? 'Boarding & Daycare Sanctuary',
+                        $request->user()->name,
+                        $request->user()->email,
+                        $pet->name,
+                        'Boarding / Daycare Stay',
+                        \Carbon\Carbon::parse($validated['check_in_date'])->format('M d, Y') . ' to ' . \Carbon\Carbon::parse($validated['check_out_date'])->format('M d, Y'),
+                        $validated['notes']
+                    ));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send boarding booking emails: ' . $e->getMessage());
         }
 
         return back()->with('success', 'Boarding reservation request sent successfully!');
@@ -722,10 +812,25 @@ class PublicDirectoryController
             $message = Message::create([
                 'conversation_id' => $conversation->id,
                 'user_id' => $currentUserId,
-                'body' => "Inquiry regarding " . $petShop->shop_name . ":\n\n" . $validated['message'],
+                'body' => "Inquiry regarding " . ($petShop->name ?? $petShop->shop_name) . ":\n\n" . $validated['message'],
             ]);
 
-            return redirect()->route('messages.index', ['conversation' => $message->conversation_id])
+            try {
+                $shopEmail = $petShop->user?->email ?? $petShop->email;
+                if ($shopEmail) {
+                    \Illuminate\Support\Facades\Mail::to($shopEmail)
+                        ->send(new \App\Mail\PetShopInquiryMail(
+                            $petShop->name ?? $petShop->shop_name ?? 'Pet Shop',
+                            $request->user()->name,
+                            $request->user()->email,
+                            $validated['message']
+                        ));
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to send pet shop inquiry email: ' . $e->getMessage());
+            }
+
+            return redirect()->route('dashboard.messages.index', ['conversation' => $message->conversation_id])
                              ->with('success', 'Your inquiry has been sent.');
         }
 
