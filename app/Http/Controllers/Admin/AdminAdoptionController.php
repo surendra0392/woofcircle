@@ -282,6 +282,20 @@ class AdminAdoptionController
     {
         $adoption->update(['is_approved' => ! $adoption->is_approved]);
 
+        if ($adoption->is_approved && $adoption->user && $adoption->user->email) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($adoption->user->email)
+                    ->send(new \App\Mail\ListingApprovedMail(
+                        $adoption->user->name,
+                        'Adoption',
+                        $adoption->title,
+                        route('marketplace.adoption.show', $adoption->slug)
+                    ));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to send adoption approved email: ' . $e->getMessage());
+            }
+        }
+
         return redirect()->route('admin.adoptions.index')->with('success', 'Approval status updated.');
     }
 

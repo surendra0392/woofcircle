@@ -325,6 +325,20 @@ class AdminLitterController
     {
         $litter->update(['is_approved' => ! $litter->is_approved]);
 
+        if ($litter->is_approved && $litter->user && $litter->user->email) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($litter->user->email)
+                    ->send(new \App\Mail\ListingApprovedMail(
+                        $litter->user->name,
+                        'Puppy / Litter',
+                        $litter->title,
+                        route('marketplace.puppies.show', $litter->slug)
+                    ));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to send litter approved email: ' . $e->getMessage());
+            }
+        }
+
         return back()->with('success', 'Approval status updated.');
     }
 

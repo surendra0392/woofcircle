@@ -317,6 +317,20 @@ class AdminStudServiceController
     {
         $studService->update(['is_approved' => ! $studService->is_approved]);
 
+        if ($studService->is_approved && $studService->user && $studService->user->email) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($studService->user->email)
+                    ->send(new \App\Mail\ListingApprovedMail(
+                        $studService->user->name,
+                        'Stud Service',
+                        $studService->title,
+                        route('marketplace.studs.show', $studService->slug)
+                    ));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to send stud approved email: ' . $e->getMessage());
+            }
+        }
+
         return back()->with('success', 'Approval status updated.');
     }
 

@@ -7,35 +7,30 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class LostPetAlertNotification extends Notification
+class LostPetAlertNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $pet;
-
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct($pet)
+    public function __construct(public $pet)
     {
-        $this->pet = $pet;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
     public function via(object $notifiable): array
     {
-        return ['database', 'broadcast'];
+        return ['database', 'broadcast', 'mail'];
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+            ->subject('🚨 URGENT: Lost Dog Alert Near You - ' . $this->pet->name)
+            ->view('emails.lost_pet_alert', [
+                'pet' => $this->pet,
+                'owner' => $this->pet->user,
+                'recipientName' => $notifiable->name ?? 'Community Member',
+            ]);
+    }
+
     public function toArray(object $notifiable): array
     {
         return [

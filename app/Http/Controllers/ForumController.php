@@ -85,7 +85,7 @@ class ForumController
             'body' => 'required|string',
         ]);
 
-        $thread->replies()->create([
+        $reply = $thread->replies()->create([
             'user_id' => auth()->id(),
             'body' => $validated['body'],
         ]);
@@ -93,6 +93,24 @@ class ForumController
         $thread->increment('reply_count');
 
         auth()->user()->increment('karma_points', 2);
+
+        try {
+            $replier = auth()->user();
+            $author = $thread->user;
+            if ($author && $author->email && $author->id !== $replier->id) {
+                \Illuminate\Support\Facades\Mail::to($author->email)
+                    ->send(new \App\Mail\ForumReplyNotificationMail(
+                        $author->name,
+                        $replier->name,
+                        $thread->title,
+                        $category->name,
+                        Str::limit(strip_tags($validated['body']), 160),
+                        route('forum.thread', [$category->slug, $thread->slug])
+                    ));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to send forum reply email: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Reply posted successfully!');
     }

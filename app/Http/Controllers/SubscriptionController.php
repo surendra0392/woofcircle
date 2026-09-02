@@ -224,6 +224,19 @@ class SubscriptionController
 
         Log::info("User #{$user->id} upgraded to Tier #{$targetTierId} via Razorpay.");
 
+        try {
+            $tierName = $targetTierId === 3 ? 'Sovereign Elite' : 'Connoisseur';
+            \Illuminate\Support\Facades\Mail::to($user->email)
+                ->send(new \App\Mail\SubscriptionUpgradedMail(
+                    $user->name,
+                    $tierName,
+                    $billing,
+                    $endsAt->format('M d, Y')
+                ));
+        } catch (\Throwable $e) {
+            Log::warning('Failed to send subscription confirmation email: ' . $e->getMessage());
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Privilege tier successfully activated!',
@@ -244,6 +257,19 @@ class SubscriptionController
         $user->update([
             'listing_tier_id' => $targetTierId,
         ]);
+
+        try {
+            $tierName = $targetTierId === 3 ? 'Sovereign Elite' : 'Connoisseur';
+            \Illuminate\Support\Facades\Mail::to($user->email)
+                ->send(new \App\Mail\SubscriptionUpgradedMail(
+                    $user->name,
+                    $tierName,
+                    'monthly',
+                    now()->addMonth()->format('M d, Y')
+                ));
+        } catch (\Throwable $e) {
+            Log::warning('Failed to send stripe subscription email: ' . $e->getMessage());
+        }
 
         return redirect()->route('subscription.index')->with('success', 'Your membership has been upgraded successfully!');
     }
