@@ -43,6 +43,23 @@ class PublicContactController
                     $validated['subject'],
                     $validated['message']
                 ));
+
+            // If logged in, push confirmation
+            try {
+                if (auth()->check()) {
+                    $pushService = app(\App\Services\PushNotificationService::class);
+                    if ($pushService->isEnabled()) {
+                        $pushService->sendToUser(
+                            auth()->id(),
+                            "Inquiry Received 📩",
+                            "Thank you for contacting WoofCircle. We will get back to you soon.",
+                            route('dashboard')
+                        );
+                    }
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Push contact error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send contact emails: ' . $e->getMessage());
         }

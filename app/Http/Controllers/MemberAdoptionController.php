@@ -127,6 +127,28 @@ class MemberAdoptionController
         try {
             \Illuminate\Support\Facades\Mail::to($user->email)
                 ->send(new \App\Mail\AdoptionCreatedMail($user->name, $adoption->load(['breed', 'city', 'state'])));
+
+            // WhatsApp & Push to rescuer / poster
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($user->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $user->mobile_number,
+                        "🐾 *WoofCircle Adoption Listing Submitted*\n\nYour adoption listing for *'{$adoption->title}'* has been submitted for review. You will receive an alert once approved!"
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled()) {
+                    $pushService->sendToUser(
+                        $user->id,
+                        "Adoption Listing Submitted 🐾",
+                        "Your listing '{$adoption->title}' is being verified by our team.",
+                        route('dashboard.adoptions.index')
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp/Push adoption created error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send adoption created email: ' . $e->getMessage());
         }

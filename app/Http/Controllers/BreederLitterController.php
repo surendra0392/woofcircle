@@ -128,6 +128,28 @@ class BreederLitterController
         try {
             \Illuminate\Support\Facades\Mail::to($user->email)
                 ->send(new \App\Mail\LitterCreatedMail($user->name, $litter->load(['breed', 'city', 'state'])));
+
+            // WhatsApp & Push to breeder
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($user->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $user->mobile_number,
+                        "🐾 *WoofCircle Litter Listing Submitted*\n\nYour listing *'{$litter->title}'* has been submitted and is currently under verification. You will be notified as soon as it goes live!"
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled()) {
+                    $pushService->sendToUser(
+                        $user->id,
+                        "Litter Submitted for Review 🐾",
+                        "Your listing '{$litter->title}' is being verified by our team.",
+                        route('breeder.litters.index')
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp/Push litter created error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send litter created email: ' . $e->getMessage());
         }

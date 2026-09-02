@@ -182,6 +182,28 @@ class ProfileController
             $profileName = $profile->name ?? $profile->clinic_name ?? $profile->shop_name ?? $profile->shelter_name ?? $profile->kennel_name ?? $user->name;
             \Illuminate\Support\Facades\Mail::to($user->email)
                 ->send(new \App\Mail\ProfileCreatedMail($user->name, $type, $profileName));
+
+            // WhatsApp & Push to provider
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($user->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $user->mobile_number,
+                        "🏥 *WoofCircle Directory Profile Updated*\n\nYour *{$type}* profile (*{$profileName}*) has been saved successfully.\n\nView dashboard: " . route('dashboard')
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled()) {
+                    $pushService->sendToUser(
+                        $user->id,
+                        "Directory Profile Updated 🏥",
+                        "Your {$type} profile '{$profileName}' has been updated.",
+                        route('dashboard')
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp/Push profile error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send profile update email: ' . $e->getMessage());
         }

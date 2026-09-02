@@ -79,6 +79,19 @@ class PublicCareerController
                     $request->portfolio_url,
                     $path
                 ));
+
+            // WhatsApp confirmation to applicant
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($request->phone)) {
+                    $whatsAppService->sendTextMessage(
+                        $request->phone,
+                        "🐾 *WoofCircle Career Application Received*\n\nHello {$request->full_name}, thank you for applying for *{$position->title}* at WoofCircle. Our talent acquisition team will review your resume."
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp career notification error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send career application emails: ' . $e->getMessage());
         }

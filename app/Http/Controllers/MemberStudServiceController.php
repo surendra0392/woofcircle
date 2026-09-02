@@ -130,6 +130,28 @@ class MemberStudServiceController
         try {
             \Illuminate\Support\Facades\Mail::to($user->email)
                 ->send(new \App\Mail\StudServiceCreatedMail($user->name, $studService->load(['breed', 'city', 'state'])));
+
+            // WhatsApp & Push to stud owner
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($user->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $user->mobile_number,
+                        "🐾 *WoofCircle Stud Listing Submitted*\n\nYour stud listing *'{$studService->title}'* has been submitted for review. You will receive an alert once approved!"
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled()) {
+                    $pushService->sendToUser(
+                        $user->id,
+                        "Stud Listing Submitted 🐾",
+                        "Your listing '{$studService->title}' is being verified by our team.",
+                        route('dashboard.stud-services.index')
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp/Push stud created error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send stud service created email: ' . $e->getMessage());
         }

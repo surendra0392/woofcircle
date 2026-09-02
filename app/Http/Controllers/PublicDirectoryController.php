@@ -318,6 +318,39 @@ class PublicDirectoryController
                         $validated['notes']
                     ));
             }
+
+            // WhatsApp & Push for Vet appointment
+            try {
+                $user = $request->user();
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                $apptTime = \Carbon\Carbon::parse($validated['appointment_date'])->format('M d, Y h:i A');
+                $vetName = $vet->name ?? $vet->clinic_name ?? 'Veterinary Clinic';
+
+                if ($whatsAppService->isEnabled() && !empty($user->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $user->mobile_number,
+                        "📅 *WoofCircle Appointment Scheduled*\n\nHello {$user->name}, your appointment for *{$pet->name}* at *{$vetName}* is confirmed for *{$apptTime}*.\n\nDashboard: " . route('dashboard')
+                    );
+                }
+
+                $vetPhone = $vet->phone ?? $vet->mobile_number ?? $vet->user?->mobile_number;
+                if ($whatsAppService->isEnabled() && !empty($vetPhone)) {
+                    $whatsAppService->sendTextMessage(
+                        $vetPhone,
+                        "🔔 *New Clinic Appointment Request*\n\n*{$user->name}* requested an appointment for *{$pet->name}* ({$validated['appointment_type']}) on *{$apptTime}*."
+                    );
+                }
+
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled()) {
+                    $pushService->sendToUser($user->id, "Appointment Scheduled 📅", "Appointment with {$vetName} for {$pet->name} on {$apptTime}.", route('dashboard'));
+                    if ($vet->user_id) {
+                        $pushService->sendToUser($vet->user_id, "New Patient Appointment 🔔", "{$user->name} booked an appointment for {$pet->name} on {$apptTime}.", route('dashboard'));
+                    }
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp/Push vet appointment error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send appointment emails: ' . $e->getMessage());
         }
@@ -825,6 +858,33 @@ class PublicDirectoryController
                             $request->user()->email,
                             $validated['message']
                         ));
+                }
+
+                // WhatsApp & Push to pet shop owner
+                try {
+                    $shopPhone = $petShop->phone ?? $petShop->mobile_number ?? $petShop->user?->mobile_number;
+                    $whatsAppService = app(\App\Services\WhatsAppService::class);
+                    $shopName = $petShop->name ?? $petShop->shop_name ?? 'Pet Shop';
+                    $customerName = $request->user()->name;
+
+                    if ($whatsAppService->isEnabled() && !empty($shopPhone)) {
+                        $whatsAppService->sendTextMessage(
+                            $shopPhone,
+                            "🛍️ *New Customer Product Inquiry*\n\n*{$customerName}* sent an inquiry regarding *{$shopName}*:\n\"" . \Illuminate\Support\Str::limit($validated['message'], 140) . "\"\n\nReply in chat: " . route('dashboard.messages.index')
+                        );
+                    }
+
+                    $pushService = app(\App\Services\PushNotificationService::class);
+                    if ($pushService->isEnabled() && $petShop->user_id) {
+                        $pushService->sendToUser(
+                            $petShop->user_id,
+                            "New Customer Inquiry 🛍️",
+                            "{$customerName} inquired about {$shopName}.",
+                            route('dashboard.messages.index')
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('WhatsApp/Push pet shop inquiry error: ' . $e->getMessage());
                 }
             } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::warning('Failed to send pet shop inquiry email: ' . $e->getMessage());

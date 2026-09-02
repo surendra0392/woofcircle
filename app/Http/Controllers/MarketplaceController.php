@@ -633,6 +633,28 @@ class MarketplaceController
                         "Requested Puppy: {$validated['pet_name']} ({$validated['gender']})"
                     ));
             }
+
+            // WhatsApp & Push to breeder
+            try {
+                $whatsAppService = app(\App\Services\WhatsAppService::class);
+                if ($whatsAppService->isEnabled() && !empty($breeder?->mobile_number)) {
+                    $whatsAppService->sendTextMessage(
+                        $breeder->mobile_number,
+                        "🐾 *New Puppy Transfer Request on WoofCircle*\n\n*{$user->name}* has requested to claim puppy *'{$validated['pet_name']}'* ({$validated['gender']}) from litter *'{$litter->title}'*.\n\nReview & Approve on Dashboard:\n" . route('dashboard')
+                    );
+                }
+                $pushService = app(\App\Services\PushNotificationService::class);
+                if ($pushService->isEnabled() && $breeder) {
+                    $pushService->sendToUser(
+                        $breeder->id,
+                        "New Puppy Transfer Request 🐾",
+                        "{$user->name} requested puppy '{$validated['pet_name']}'.",
+                        route('dashboard')
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('WhatsApp/Push transfer request error: ' . $e->getMessage());
+            }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Failed to send puppy transfer request email: ' . $e->getMessage());
         }
