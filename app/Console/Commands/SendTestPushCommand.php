@@ -14,7 +14,7 @@ class SendTestPushCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'push:test {userId? : The target user ID}';
+    protected $signature = 'push:test {userId? : The target user ID} {--broadcast : Broadcast to all subscribed devices}';
 
     /**
      * The console command description.
@@ -28,6 +28,7 @@ class SendTestPushCommand extends Command
      */
     public function handle(PushNotificationService $pushService): int
     {
+        $isBroadcast = $this->option('broadcast');
         $userId = $this->argument('userId') ?? 1;
 
         $provider = Setting::get('push_provider', 'onesignal');
@@ -41,13 +42,17 @@ class SendTestPushCommand extends Command
             return Command::FAILURE;
         }
 
-        $this->info("Dispatching test push notification for User #{$userId}...");
-
         $title = "WoofCircle Notification 🐾";
         $body = "This is a live test push notification from WoofCircle Sanctuary.";
         $url = config('app.url', 'https://woofcircle.in') . '/dashboard';
 
-        $result = $pushService->sendToUser((int) $userId, $title, $body, $url);
+        if ($isBroadcast) {
+            $this->info("Broadcasting test push notification to ALL subscribers...");
+            $result = $pushService->sendBroadcast($title, $body, $url);
+        } else {
+            $this->info("Dispatching test push notification for User #{$userId}...");
+            $result = $pushService->sendToUser((int) $userId, $title, $body, $url);
+        }
 
         if ($result['success'] ?? false) {
             $this->info("✅ Push notification dispatched successfully!");

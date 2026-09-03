@@ -70,7 +70,7 @@ class PushNotificationService
 
         if ($provider === 'onesignal') {
             return $this->sendOneSignal([
-                'included_segments' => ['Subscribed Users'],
+                'included_segments' => ['Total Subscriptions', 'Active Subscriptions', 'Subscribed Users'],
                 'headings' => ['en' => $title],
                 'contents' => ['en' => $message],
                 'url' => $url ?? config('app.url', 'https://woofcircle.in'),
@@ -122,6 +122,14 @@ class PushNotificationService
         $apiKey = Setting::get('onesignal_rest_api_key') ?: env('ONESIGNAL_REST_API_KEY');
 
         $payload['app_id'] = $appId;
+
+        if (isset($payload['data'])) {
+            if (empty($payload['data'])) {
+                unset($payload['data']);
+            } else {
+                $payload['data'] = (object) $payload['data'];
+            }
+        }
 
         try {
             $response = Http::withHeaders([

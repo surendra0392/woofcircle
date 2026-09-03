@@ -65,13 +65,27 @@
                     await OneSignal.init({
                         appId: "<?php echo e($oneSignalAppId); ?>",
                         allowLocalhostAsSecureOrigin: true,
-                        serviceWorkerPath: 'OneSignalSDKWorker.js',
-                        serviceWorkerParam: { scope: '/' },
+                        notifyButton: {
+                            enable: true,
+                        },
                     });
 
                     <?php if(auth()->check()): ?>
-                        await OneSignal.login("<?php echo e(auth()->id()); ?>");
+                        try {
+                            await OneSignal.login("<?php echo e(auth()->id()); ?>");
+                        } catch (e) {
+                            console.warn('[OneSignal] Login sync:', e);
+                        }
                     <?php endif; ?>
+
+                    // Automatically request push notification subscription
+                    try {
+                        await OneSignal.Slidedown.promptPush();
+                    } catch (e) {
+                        try {
+                            await OneSignal.Notifications.requestPermission();
+                        } catch (err) {}
+                    }
                 });
             </script>
         <?php endif; ?>
