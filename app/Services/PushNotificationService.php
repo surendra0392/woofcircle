@@ -20,7 +20,9 @@ class PushNotificationService
 
         $provider = Setting::get('push_provider', 'onesignal');
         if ($provider === 'onesignal') {
-            return !empty(Setting::get('onesignal_app_id')) && !empty(Setting::get('onesignal_rest_api_key'));
+            $appId = Setting::get('onesignal_app_id') ?: env('ONESIGNAL_APP_ID', '6d38b531-5245-432b-b902-b1171e1ce056');
+            $apiKey = Setting::get('onesignal_rest_api_key') ?: env('ONESIGNAL_REST_API_KEY');
+            return !empty($appId) && !empty($apiKey);
         }
 
         return !empty(Setting::get('firebase_server_key'));
@@ -32,7 +34,7 @@ class PushNotificationService
     public function sendToUser(int|User $user, string $title, string $message, ?string $url = null, array $data = []): array
     {
         if (!$this->isEnabled()) {
-            return ['success' => false, 'skipped' => true, 'reason' => 'Push notifications disabled'];
+            return ['success' => false, 'skipped' => true, 'reason' => 'Push notifications disabled or API key missing'];
         }
 
         $userId = $user instanceof User ? $user->id : $user;
@@ -40,6 +42,10 @@ class PushNotificationService
 
         if ($provider === 'onesignal') {
             return $this->sendOneSignal([
+                'include_aliases' => [
+                    'external_id' => [(string) $userId],
+                ],
+                'target_channel' => 'push',
                 'include_external_user_ids' => [(string) $userId],
                 'headings' => ['en' => $title],
                 'contents' => ['en' => $message],
@@ -112,8 +118,8 @@ class PushNotificationService
      */
     protected function sendOneSignal(array $payload): array
     {
-        $appId = Setting::get('onesignal_app_id');
-        $apiKey = Setting::get('onesignal_rest_api_key');
+        $appId = Setting::get('onesignal_app_id') ?: env('ONESIGNAL_APP_ID', '6d38b531-5245-432b-b902-b1171e1ce056');
+        $apiKey = Setting::get('onesignal_rest_api_key') ?: env('ONESIGNAL_REST_API_KEY');
 
         $payload['app_id'] = $appId;
 

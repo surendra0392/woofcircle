@@ -51,6 +51,31 @@
 
         @viteReactRefresh
         @vite(['resources/js/app.tsx'])
+        {{-- OneSignal Web Push SDK --}}
+        @php
+            $oneSignalAppId = !empty($settings['onesignal_app_id']) 
+                ? trim($settings['onesignal_app_id']) 
+                : env('ONESIGNAL_APP_ID', '6d38b531-5245-432b-b902-b1171e1ce056');
+        @endphp
+        @if(!empty($oneSignalAppId))
+            <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+            <script>
+                window.OneSignalDeferred = window.OneSignalDeferred || [];
+                OneSignalDeferred.push(async function(OneSignal) {
+                    await OneSignal.init({
+                        appId: "{{ $oneSignalAppId }}",
+                        allowLocalhostAsSecureOrigin: true,
+                        serviceWorkerPath: 'OneSignalSDKWorker.js',
+                        serviceWorkerParam: { scope: '/' },
+                    });
+
+                    @if(auth()->check())
+                        await OneSignal.login("{{ auth()->id() }}");
+                    @endif
+                });
+            </script>
+        @endif
+
         @inertiaHead
     </head>
     <body class="font-sans antialiased">

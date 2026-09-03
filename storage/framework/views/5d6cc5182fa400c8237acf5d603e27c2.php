@@ -51,6 +51,31 @@
 
         <?php echo app('Illuminate\Foundation\Vite')->reactRefresh(); ?>
         <?php echo app('Illuminate\Foundation\Vite')(['resources/js/app.tsx']); ?>
+        
+        <?php
+            $oneSignalAppId = !empty($settings['onesignal_app_id']) 
+                ? trim($settings['onesignal_app_id']) 
+                : env('ONESIGNAL_APP_ID', '6d38b531-5245-432b-b902-b1171e1ce056');
+        ?>
+        <?php if(!empty($oneSignalAppId)): ?>
+            <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+            <script>
+                window.OneSignalDeferred = window.OneSignalDeferred || [];
+                OneSignalDeferred.push(async function(OneSignal) {
+                    await OneSignal.init({
+                        appId: "<?php echo e($oneSignalAppId); ?>",
+                        allowLocalhostAsSecureOrigin: true,
+                        serviceWorkerPath: 'OneSignalSDKWorker.js',
+                        serviceWorkerParam: { scope: '/' },
+                    });
+
+                    <?php if(auth()->check()): ?>
+                        await OneSignal.login("<?php echo e(auth()->id()); ?>");
+                    <?php endif; ?>
+                });
+            </script>
+        <?php endif; ?>
+
         <?php $__inertiaSsrResponse = app(\Inertia\Ssr\SsrState::class)->setPage($page)->dispatch();  if ($__inertiaSsrResponse) { echo $__inertiaSsrResponse->head; } ?>
     </head>
     <body class="font-sans antialiased">

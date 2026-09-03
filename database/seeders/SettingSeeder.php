@@ -241,7 +241,7 @@ class SettingSeeder extends Seeder
             [
                 'key' => 'push_enabled',
                 'label' => 'Enable Push Notifications',
-                'value' => '0',
+                'value' => '1',
                 'type' => 'boolean',
                 'group' => 'push_notifications',
             ],
@@ -255,7 +255,7 @@ class SettingSeeder extends Seeder
             [
                 'key' => 'onesignal_app_id',
                 'label' => 'OneSignal App ID',
-                'value' => '',
+                'value' => '6d38b531-5245-432b-b902-b1171e1ce056',
                 'type' => 'text',
                 'group' => 'push_notifications',
             ],

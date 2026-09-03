@@ -25,6 +25,21 @@ export const inertiaConfig = {
         if (!el) return;
         const root = createRoot(el);
         root.render(<App {...props} />);
+
+        // Sync authenticated user with OneSignal Web Push SDK
+        if (typeof window !== 'undefined') {
+            const userId = props?.initialPage?.props?.auth?.user?.id;
+            if (userId) {
+                const osDeferred = (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
+                osDeferred.push(async (OneSignal: any) => {
+                    try {
+                        await OneSignal.login(String(userId));
+                    } catch (e) {
+                        console.warn('[OneSignal] User login sync:', e);
+                    }
+                });
+            }
+        }
     },
     progress: inertiaProgress,
 };
