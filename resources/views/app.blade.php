@@ -65,13 +65,27 @@
                     await OneSignal.init({
                         appId: "{{ $oneSignalAppId }}",
                         allowLocalhostAsSecureOrigin: true,
-                        serviceWorkerPath: 'OneSignalSDKWorker.js',
-                        serviceWorkerParam: { scope: '/' },
+                        notifyButton: {
+                            enable: true,
+                        },
                     });
 
                     @if(auth()->check())
-                        await OneSignal.login("{{ auth()->id() }}");
+                        try {
+                            await OneSignal.login("{{ auth()->id() }}");
+                        } catch (e) {
+                            console.warn('[OneSignal] Login sync:', e);
+                        }
                     @endif
+
+                    // Automatically request push notification subscription
+                    try {
+                        await OneSignal.Slidedown.promptPush();
+                    } catch (e) {
+                        try {
+                            await OneSignal.Notifications.requestPermission();
+                        } catch (err) {}
+                    }
                 });
             </script>
         @endif
