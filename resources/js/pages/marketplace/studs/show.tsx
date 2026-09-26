@@ -2,6 +2,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { ReviewSection } from '@/components/review-section';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public/public-layout';
+import SeoHead from '@/components/SeoHead';
 import { SharedData, Stud } from '@/types';
 import { Head, Link, usePage, router, useForm } from '@inertiajs/react';
 import {
@@ -78,7 +79,31 @@ export default function StudShow({ stud, healthRecords = [], hasHealthRecords = 
     };
     return (
         <PublicLayout>
-            <Head title={`${displayTitle} | ${stud.breed?.name || 'Dog'} Stud Service | ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`${displayTitle} - ${stud.breed?.name || 'Champion'} Stud Service in ${stud.city?.name || 'India'} | WoofCircle`}
+                description={stud.description ? stud.description.slice(0, 155) : `Book ${displayTitle} (${stud.breed?.name}) champion stud dog service. Health-certified, pedigree verified, proven bloodlines on WoofCircle.`}
+                keywords={`${stud.breed?.name || 'stud dog'} stud service, ${stud.breed?.name} stud ${stud.city?.name || 'India'}, champion stud dog, KCI certified stud`}
+                image={stud.featured_image_url || '/images/logo-icon.png'}
+                type="product"
+                schema={{
+                    "@context": "https://schema.org",
+                    "@type": "Product",
+                    "name": `${displayTitle} - Stud Service`,
+                    "description": stud.description || `${displayTitle} champion stud service available on WoofCircle.`,
+                    "image": stud.featured_image_url ? [stud.featured_image_url] : ["https://woofcircle.in/images/logo-icon.png"],
+                    "brand": {
+                        "@type": "Brand",
+                        "name": stud.breed?.name || "Canine Stud"
+                    },
+                    "offers": {
+                        "@type": "Offer",
+                        "priceCurrency": "INR",
+                        "price": stud.fee || "0",
+                        "availability": stud.is_available ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+                        "url": `https://woofcircle.in/studs/${stud.slug || stud.id}`
+                    }
+                }}
+            />
             <div className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">
                 {/* Immersive Background */}
 

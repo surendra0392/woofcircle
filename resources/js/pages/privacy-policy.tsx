@@ -1,14 +1,19 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { Clock, Cookie, Cpu, Database, Eye, FileText, Layers, Lock, ToggleLeft, ShieldCheck } from 'lucide-react';
 
 export default function PrivacyPolicy() {
     const { settings } = usePage<SharedData>().props;
     return (
         <PublicLayout>
-            <Head title={`Privacy Policy | ${settings.site_name}`} />
+            <SeoHead
+                title={`Privacy Policy & Data Security | ${settings.site_name}`}
+                description={`Read the ${settings.site_name} privacy policy. Learn how we safeguard your personal data, pet health records, and communication details with military-grade encryption.`}
+                type="website"
+            />
 
             {/* Header Section */}
             <section className="bg-[#fcfbf9] border-b border-[#e8ded1] pt-36 pb-16 sm:pt-44 sm:pb-20">

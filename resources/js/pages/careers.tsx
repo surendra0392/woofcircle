@@ -1,7 +1,8 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, Link, usePage, useForm } from '@inertiajs/react';
+import { Link, usePage, useForm } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { useState } from 'react';
 import {
     Award,
@@ -138,7 +139,12 @@ export default function Careers({ positions = [] }: { positions: Position[] }) {
 
     return (
         <PublicLayout>
-            <Head title={`Careers — ${settings.site_name}`} />
+            <SeoHead
+                title={`Careers & Open Positions | ${settings.site_name}`}
+                description={`Join the ${settings.site_name} team building India's premier canine technology ecosystem. Explore open roles across engineering, product, veterinary medicine, and marketing.`}
+                type="website"
+                keywords="woofcircle careers, pet tech jobs India, startup jobs Bangalore, engineering canine technology"
+            />
 
             {/* ─── Hero ──────────────────────────────────────────────── */}
             <section className="bg-[#fcfbf9] border-b border-[#e8ded1] pt-36 pb-16 sm:pt-44 sm:pb-20">

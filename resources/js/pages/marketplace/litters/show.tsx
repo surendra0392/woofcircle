@@ -3,7 +3,8 @@ import { ReviewSection } from '@/components/review-section';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public/public-layout';
 import { Litter, SharedData } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { useState, useEffect } from 'react';
 import SaveButton from '@/components/public/save-button';
 import {
@@ -51,7 +52,28 @@ export default function LitterShow({ litter, healthRecords, hasHealthRecords }: 
 
     return (
         <PublicLayout>
-            <Head title={`${displayTitle} | ${litter.breed?.name || 'Pedigree Dogs'} | ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`${displayTitle} - ${litter.breed?.name || 'Purebred'} Puppies in ${litter.city?.name || 'India'} | ${settings.site_name}`}
+                description={litter.description ? litter.description.slice(0, 160) : `Certified ${litter.breed?.name || 'purebred'} litter in ${litter.city?.name || 'India'} available on WoofCircle. Vaccinated, health-checked puppies from ethical breeders.`}
+                image={litter.featured_image_url || undefined}
+                type="product"
+                keywords={`${litter.breed?.name || 'dog'} puppies, buy ${litter.breed?.name || 'puppy'} ${litter.city?.name || 'India'}, purebred litter ${litter.city?.name || ''}, woofcircle puppies`}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'Product',
+                    name: displayTitle,
+                    description: litter.description || `Certified ${litter.breed?.name || 'purebred'} litter in ${litter.city?.name || 'India'}.`,
+                    image: litter.featured_image_url ? [litter.featured_image_url] : undefined,
+                    category: 'Dog Litter',
+                    offers: {
+                        '@type': 'Offer',
+                        price: litter.price || 0,
+                        priceCurrency: 'INR',
+                        availability: litter.is_available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+                    },
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <div className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">
                 {/* Immersive Background */}
 

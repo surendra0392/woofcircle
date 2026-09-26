@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Head, useForm, router, Link } from '@inertiajs/react';
+import { useForm, router, Link } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import PublicLayout from '@/layouts/public/public-layout';
 import { Heart, MessageCircle, Image as ImageIcon, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -49,7 +50,12 @@ export default function FeedIndex({ photos, auth }: any) {
 
     return (
         <PublicLayout>
-            <Head title="Woof Feed - Community" />
+            <SeoHead
+                title="Woof Feed - Live Dog Community & Social Photos | WoofCircle"
+                description="Join the live WoofCircle canine community feed. Share dog photos, celebrate achievements, connect with pet parents, and discover daily stories."
+                type="website"
+                keywords="dog feed, pet community India, dog photos, pet parents network"
+            />
 
             <section className="border-b border-[#e8ded1] bg-[#fcfbf9] pt-32 pb-12">
                 <div className="container-wide px-6 lg:px-12">

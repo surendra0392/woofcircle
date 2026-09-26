@@ -3,7 +3,8 @@ import { ReviewSection } from '@/components/review-section';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public/public-layout';
 import { Review, SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { useState, useEffect } from 'react';
 import ShareDialog from '@/components/public/share-dialog';
 import { Activity, ArrowUpRight, CheckCircle2, Clock, Dog, Heart, MapPin, Share2, ShieldCheck, Star, Stethoscope } from 'lucide-react';
@@ -56,7 +57,38 @@ export default function VetShow({ vet, pets = [] }: PageProps) {
 
     return (
         <PublicLayout>
-            <Head title={`${displayName} | Premium Veterinary Care | ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`${displayName} - Veterinary Clinic in ${vet.city?.name || 'India'} | ${settings.site_name}`}
+                description={vet.description ? vet.description.slice(0, 160) : `${displayName} is a certified veterinary clinic located in ${vet.city?.name || 'India'}. Book appointments, view services and ratings.`}
+                image={vet.logo_url || undefined}
+                type="business.business"
+                keywords={`${displayName}, vet clinic ${vet.city?.name || 'India'}, animal hospital ${vet.city?.name || ''}, veterinarian ${vet.city?.name || ''}`}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'VeterinaryCare',
+                    name: displayName,
+                    description: vet.description || `${displayName} is a certified veterinary clinic located in ${vet.city?.name || 'India'}.`,
+                    image: vet.logo_url ? [vet.logo_url] : undefined,
+                    telephone: vet.phone || undefined,
+                    address: {
+                        '@type': 'PostalAddress',
+                        streetAddress: vet.address || undefined,
+                        addressLocality: vet.city?.name || undefined,
+                        addressRegion: vet.state?.name || undefined,
+                        addressCountry: 'IN',
+                    },
+                    ...(vet.average_rating && vet.reviews_count
+                        ? {
+                              aggregateRating: {
+                                  '@type': 'AggregateRating',
+                                  ratingValue: vet.average_rating,
+                                  reviewCount: vet.reviews_count,
+                              },
+                          }
+                        : {}),
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <div className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">
                 {/* Immersive Background */}
 

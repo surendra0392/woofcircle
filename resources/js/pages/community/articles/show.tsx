@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import ShareDialog from '@/components/public/share-dialog';
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import {
     ArrowLeft,
     ArrowRight,
@@ -112,7 +113,33 @@ export default function ArticleShow({ article, relatedArticles = [], isSavedProp
 
     return (
         <PublicLayout>
-            <Head title={`${article.title} - ${settings.site_name} Knowledge Hub`} />
+            <SeoHead
+                title={`${article.title} | ${settings.site_name} Knowledge Hub`}
+                description={article.excerpt || article.summary || (article.content ? article.content.replace(/<[^>]*>/g, '').slice(0, 160) : '')}
+                image={article.image_url || undefined}
+                type="article"
+                publishedTime={article.created_at}
+                author={authorDisplayName}
+                keywords={`${article.category?.name || 'dog care'}, canine health, dog training guide, ${article.title.toLowerCase()}`}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'Article',
+                    headline: article.title,
+                    description: article.excerpt || article.summary || (article.content ? article.content.replace(/<[^>]*>/g, '').slice(0, 160) : ''),
+                    image: article.image_url ? [article.image_url] : undefined,
+                    datePublished: article.created_at,
+                    dateModified: article.created_at,
+                    author: {
+                        '@type': 'Person',
+                        name: authorDisplayName,
+                    },
+                    publisher: {
+                        '@type': 'Organization',
+                        name: 'WoofCircle',
+                    },
+                    articleSection: article.category?.name || 'Canine Care',
+                }}
+            />
 
             {/* --- CINEMATIC HEADER HERO --- */}
             <div className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">

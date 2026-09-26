@@ -2,7 +2,7 @@ import { AppHeader } from '@/components/app-header';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getInitials } from '@/hooks/use-initials';
-import { Head } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { Trophy, Award } from 'lucide-react';
 
 interface LeaderboardUser {
@@ -15,7 +15,11 @@ interface LeaderboardUser {
 export default function Leaderboard({ users }: { users: LeaderboardUser[] }) {
     return (
         <div className="min-h-screen bg-[#fcfbf9]">
-            <Head title="Community Leaderboard" />
+            <SeoHead
+                title="Community Leaderboard & Top Members | WoofCircle"
+                description="Community leaderboard and hall of fame for top canine enthusiasts on WoofCircle."
+                type="website"
+            />
             <AppHeader
                 breadcrumbs={[
                     { title: 'Community', href: '#' },

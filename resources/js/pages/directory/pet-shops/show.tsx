@@ -3,7 +3,8 @@ import { ReviewSection } from '@/components/review-section';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public/public-layout';
 import { City, Review, SharedData, State } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { useState, useEffect } from 'react';
 import ShareDialog from '@/components/public/share-dialog';
 import { ArrowUpRight, CheckCircle2, Clock, Dog, ExternalLink, Facebook, Heart, Instagram, MapPin, Share2, ShieldCheck, ShoppingBag, Star, Twitter, Youtube } from 'lucide-react';
@@ -73,7 +74,38 @@ export default function PetShopShow({ petShop }: PageProps) {
     };
     return (
         <PublicLayout>
-            <Head title={`${displayName} | Premium Pet Boutique | ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`${displayName} - Pet Shop & Supplies in ${petShop.city?.name || 'India'} | ${settings.site_name}`}
+                description={petShop.description ? petShop.description.slice(0, 160) : `${displayName} is a verified pet shop and supplies store in ${petShop.city?.name || 'India'}. Browse products, view location, and contact directly.`}
+                image={petShop.logo_url || undefined}
+                type="business.business"
+                keywords={`${displayName}, pet store ${petShop.city?.name || 'India'}, pet food ${petShop.city?.name || ''}, dog supplies ${petShop.city?.name || ''}`}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'PetStore',
+                    name: displayName,
+                    description: petShop.description || `${displayName} is a pet shop in ${petShop.city?.name || 'India'}.`,
+                    image: petShop.logo_url ? [petShop.logo_url] : undefined,
+                    telephone: petShop.phone || undefined,
+                    address: {
+                        '@type': 'PostalAddress',
+                        streetAddress: petShop.address || undefined,
+                        addressLocality: petShop.city?.name || undefined,
+                        addressRegion: petShop.state?.name || undefined,
+                        addressCountry: 'IN',
+                    },
+                    ...(petShop.average_rating && petShop.reviews_count
+                        ? {
+                              aggregateRating: {
+                                  '@type': 'AggregateRating',
+                                  ratingValue: petShop.average_rating,
+                                  reviewCount: petShop.reviews_count,
+                              },
+                          }
+                        : {}),
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <div className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">
                 {/* Immersive Background */}
 

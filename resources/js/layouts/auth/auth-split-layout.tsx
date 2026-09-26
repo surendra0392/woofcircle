@@ -1,4 +1,5 @@
 import { type SharedData } from '@/types';
+import SeoHead from '@/components/SeoHead';
 import { Link, usePage } from '@inertiajs/react';
 interface AuthLayoutProps {
     children: React.ReactNode;
@@ -9,6 +10,7 @@ export default function AuthSplitLayout({ children, title, description }: AuthLa
     const { quote, settings } = usePage<SharedData>().props;
     return (
         <div className="relative grid min-h-dvh flex-col items-center justify-center bg-[#fcfbf9] px-0 lg:max-w-none lg:grid-cols-2 lg:px-0">
+            <SeoHead title={title || 'Account'} noindex={true} />
             <div className="border-[#e8ded1] relative hidden h-full flex-col overflow-hidden border-r p-10 text-white lg:flex">
                 <div className="bg-woof-charcoal absolute inset-0">
                     <img src="/images/auth-bg.png" alt="Cinematic Dog" className="h-full w-full object-cover opacity-60 grayscale-[0.2]" />

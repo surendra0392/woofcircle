@@ -3,7 +3,8 @@ import { ReviewSection } from '@/components/review-section';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public/public-layout';
 import { Pet, Review, SharedData } from '@/types';
-import { Head, Link, usePage, useForm, router } from '@inertiajs/react';
+import { Link, usePage, useForm, router } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -76,7 +77,43 @@ export default function BoardingShow({ boarding, pets = [] }: PageProps) {
 
     return (
         <PublicLayout>
-            <Head title={`${displayName} | Premium Boarding & Daycare | ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`${displayName} - Pet Boarding & Daycare in ${boarding.city?.name || 'India'} | ${settings.site_name}`}
+                description={boarding.description ? boarding.description.slice(0, 160) : `${displayName} provides premium dog boarding, private climate-controlled suites, and pet daycare in ${boarding.city?.name || 'India'}. Book online.`}
+                image={boarding.logo_url || undefined}
+                type="business.business"
+                keywords={`${displayName}, dog boarding ${boarding.city?.name || 'India'}, pet daycare ${boarding.city?.name || ''}, pet hotel ${boarding.city?.name || ''}`}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'LocalBusiness',
+                    name: displayName,
+                    description: boarding.description || `${displayName} is a dog boarding and daycare facility in ${boarding.city?.name || 'India'}.`,
+                    image: boarding.logo_url ? [boarding.logo_url] : undefined,
+                    telephone: boarding.phone || undefined,
+                    address: {
+                        '@type': 'PostalAddress',
+                        streetAddress: boarding.address || undefined,
+                        addressLocality: boarding.city?.name || undefined,
+                        addressRegion: boarding.state?.name || undefined,
+                        addressCountry: 'IN',
+                    },
+                    ...(boarding.average_rating && boarding.reviews_count
+                        ? {
+                              aggregateRating: {
+                                  '@type': 'AggregateRating',
+                                  ratingValue: boarding.average_rating,
+                                  reviewCount: boarding.reviews_count,
+                              },
+                          }
+                        : {}),
+                    ...(boarding.price_per_day
+                        ? {
+                              priceRange: `₹${boarding.price_per_day}/day`,
+                          }
+                        : {}),
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <div className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">
                 {/* Immersive Background */}
 

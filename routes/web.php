@@ -31,7 +31,19 @@ use App\Http\Controllers\ForumController;
 use App\Http\Controllers\PedigreeController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\PublicCareerController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
+
+// ── Dynamic XML Sitemaps (Google, Bing & AI Crawlers) ──
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
+Route::get('/sitemap-pages.xml', [SitemapController::class, 'pages'])->name('sitemap.pages');
+Route::get('/sitemap-breeds.xml', [SitemapController::class, 'breeds'])->name('sitemap.breeds');
+Route::get('/sitemap-litters.xml', [SitemapController::class, 'litters'])->name('sitemap.litters');
+Route::get('/sitemap-studs.xml', [SitemapController::class, 'studs'])->name('sitemap.studs');
+Route::get('/sitemap-adoptions.xml', [SitemapController::class, 'adoptions'])->name('sitemap.adoptions');
+Route::get('/sitemap-directories.xml', [SitemapController::class, 'directories'])->name('sitemap.directories');
+Route::get('/sitemap-articles.xml', [SitemapController::class, 'articles'])->name('sitemap.articles');
+Route::get('/sitemap-events.xml', [SitemapController::class, 'events'])->name('sitemap.events');
 
 Route::get('/pets/passport-verification', [PetPassportController::class, 'index'])->name('pets.passport.index');
 Route::get('/pets/passport/{passport}', [PetPassportController::class, 'show'])->name('pets.passport.show');

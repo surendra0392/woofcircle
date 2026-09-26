@@ -6,7 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { SharedData } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import {
     AlertTriangle,
     Bell,
@@ -214,7 +215,12 @@ export default function LostPetsIndex({ lost_pets, states, total_lost_count, fil
 
     return (
         <PublicLayout>
-            <Head title={`Lost & Missing Pet SOS Network | ${settings.site_name}`} />
+            <SeoHead
+                title={`Lost & Missing Pet SOS Network | ${settings.site_name}`}
+                description="Community-driven search and rescue network for lost and found dogs across India. View missing pet alerts, GPS coordinates, and report sightings."
+                type="website"
+                keywords="lost dog India, missing pet alert, found dog, lost pet SOS Bangalore, pet search network"
+            />
 
             {/* --- CINEMATIC SOS HERO (LUXURY LIGHT THEME) --- */}
             <section className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">

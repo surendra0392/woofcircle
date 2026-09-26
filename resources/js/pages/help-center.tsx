@@ -21,7 +21,8 @@ import {
 import { articleContents, categories, faqs, glossary, onboardingChecklist, platformStatus, resources, trendingTopics } from '@/data/help-center-data';
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { useEffect, useRef, useState } from 'react';
 
 export default function HelpCenter() {
@@ -161,7 +162,24 @@ export default function HelpCenter() {
 
     return (
         <PublicLayout>
-            <Head title="Help Center | WoofCircle" />
+            <SeoHead
+                title="Help Center & Knowledge Base | WoofCircle Support"
+                description="Find answers to common questions about dog buying, verified breeder verification, vet appointments, digital pet passports, and community guidelines."
+                type="website"
+                keywords="woofcircle help, pet support, dog breeding guidelines, pet passport faq"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'FAQPage',
+                    mainEntity: (faqs || []).slice(0, 8).map((faq: any) => ({
+                        '@type': 'Question',
+                        name: faq.question || faq.q,
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: faq.answer || faq.a,
+                        },
+                    })),
+                }}
+            />
 
             <HelpHero
                 searchQuery={searchQuery}

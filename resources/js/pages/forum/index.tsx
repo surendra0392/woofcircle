@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import {
     Activity,
     ArrowRight,
@@ -86,7 +87,12 @@ export default function ForumIndex({ categories = [], latestThreads = [], stats 
 
     return (
         <PublicLayout>
-            <Head title={`Community Forum - Pet Care, Training & Breeder Discussions | ${settings.site_name}`} />
+            <SeoHead
+                title={`Community Dog Forum - Care, Training & Breeder Discussions | ${settings.site_name}`}
+                description="Join India's dedicated canine discussion forums. Connect with veterinarians, certified breeders, and dog owners to ask questions and share knowledge."
+                type="website"
+                keywords="dog forum India, pet community discussions, dog breeding forum, canine health questions, puppy advice forum"
+            />
 
             {/* --- CINEMATIC HERO --- */}
             <section className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">

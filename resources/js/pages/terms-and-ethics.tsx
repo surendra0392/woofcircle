@@ -1,7 +1,8 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { Award, CheckCircle2, FileText, Gavel, HelpCircle, Info, Scale, ShieldCheck } from 'lucide-react';
 
 export default function TermsAndEthics() {
@@ -32,7 +33,11 @@ export default function TermsAndEthics() {
 
     return (
         <PublicLayout>
-            <Head title={`Terms & Ethics | ${settings.site_name}`} />
+            <SeoHead
+                title={`Terms of Service & Breeder Ethics Code | ${settings.site_name}`}
+                description={`Read the ethical breeding standards, pet safety guidelines, and terms of service for the ${settings.site_name} platform.`}
+                type="website"
+            />
 
             {/* Header */}
             <section className="bg-[#fcfbf9] border-b border-[#e8ded1] pt-36 pb-16 sm:pt-44 sm:pb-20">

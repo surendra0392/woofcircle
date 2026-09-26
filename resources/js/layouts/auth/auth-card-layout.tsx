@@ -1,4 +1,5 @@
 import PublicLayout from '@/layouts/public/public-layout';
+import SeoHead from '@/components/SeoHead';
 import { SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import React from 'react';
@@ -16,6 +17,7 @@ export default function AuthCardLayout({
     const { settings } = usePage<SharedData>().props;
     return (
         <PublicLayout>
+            <SeoHead title={title || 'Account'} noindex={true} />
             <div className="flex min-h-screen flex-col justify-center bg-[#fcfbf9] px-4 pt-32 pb-20 sm:px-6 sm:pt-36 sm:pb-28 lg:px-8">
                 <div className="mx-auto w-full max-w-md space-y-6 rounded-3xl border border-[#e8ded1] bg-white p-7 sm:p-10 shadow-xl">
                     {title && (

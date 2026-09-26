@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import {
     ArrowLeft,
     CheckCircle2,
@@ -42,7 +43,7 @@ export default function ForumCreate() {
 
     return (
         <PublicLayout>
-            <Head title={`Start Discussion in ${category.name} | ${settings.site_name} Forum`} />
+            <SeoHead title={`Start Discussion in ${category.name} | ${settings.site_name} Forum`} noindex={true} />
 
             {/* --- CINEMATIC HEADER --- */}
             <section className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">

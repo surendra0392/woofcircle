@@ -1,5 +1,6 @@
 import PublicLayout from '@/layouts/public/public-layout';
-import { Head, Link, router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { ArrowLeft, ArrowRightLeft, Check, Info } from 'lucide-react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 
@@ -59,7 +60,12 @@ export default function BreedCompare({ all_breeds, selected_breeds, breed_ids }:
 
     return (
         <PublicLayout>
-            <Head title="Compare Breeds - Woof Circle" />
+            <SeoHead
+                title="Compare Dog Breeds Side-by-Side | WoofCircle"
+                description="Compare up to 3 dog breeds side-by-side. Compare size, temperament, trainability, exercise needs, lifespan, and apartment suitability in India."
+                type="website"
+                keywords="compare dog breeds, dog breed comparison tool, dog comparison India, best dog breed for family"
+            />
 
             <div className="bg-[#fcfbf9] border-b border-[#e8ded1] pt-32 pb-16">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

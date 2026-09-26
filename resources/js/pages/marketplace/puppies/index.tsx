@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { Breed, City, Litter, PaginatedResponse, SharedData, State } from '@/types';
+import SeoHead from '@/components/SeoHead';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     ArrowRight,
@@ -181,7 +182,19 @@ export default function PuppiesListing({
     };
     return (
         <PublicLayout>
-            <Head title={`Find Premium Puppies | ${settings.site_name} Marketplace`} />
+            <SeoHead
+                title={`Find Premium Puppies | ${settings.site_name || 'WoofCircle'} Marketplace`}
+                description="Browse health-certified, vaccinated, and KCI-registered puppies from India's top verified ethical breeders across Bangalore, Mumbai, Delhi, Hyderabad, and more."
+                keywords="buy puppies in India, puppies for sale Bangalore, ethical dog breeders, golden retriever puppies, labrador puppies, KCI certified puppies"
+                url="https://woofcircle.in/puppies"
+                schema={{
+                    "@context": "https://schema.org",
+                    "@type": "CollectionPage",
+                    "name": "Verified Puppies for Sale in India",
+                    "description": "Browse health-certified, vaccinated, and KCI-registered puppies from verified ethical breeders.",
+                    "url": "https://woofcircle.in/puppies"
+                }}
+            />
             <section className="border-woof-charcoal/5 relative overflow-hidden border-b bg-woof-pearl/5 pt-32 pb-8">
                 <div className="container-wide relative z-10 px-6 lg:px-12">
                     <div>

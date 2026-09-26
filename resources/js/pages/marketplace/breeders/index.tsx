@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { BreederProfile, City, DirectoryItem, PaginatedResponse, SharedData, State } from '@/types';
-import { Head, router, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { ChevronDown, Info, RotateCcw, Search, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 interface PageProps {
@@ -91,7 +92,23 @@ export default function BreedersIndex({
     };
     return (
         <PublicLayout>
-            <Head title={`Verified Dog Breeders in India - ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`Verified Dog Breeders in India - Ethical Kennels & Puppies | ${settings.site_name}`}
+                description={`Find verified, ethical dog breeders and certified kennels across India. Browse pedigreed litters, health records, and connect with reputable breeders in Bangalore, Mumbai, Delhi, and more.`}
+                type="website"
+                keywords="dog breeders India, ethical dog breeders, verified kennels, certified breeders Bangalore, dog breeders Mumbai, pedigreed puppies India"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'CollectionPage',
+                    name: 'Verified Dog Breeders in India',
+                    description: 'Find verified, ethical dog breeders and certified kennels across India on WoofCircle.',
+                    about: {
+                        '@type': 'Thing',
+                        name: 'Dog Breeding in India',
+                    },
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <section className="border-woof-charcoal/5 relative overflow-hidden border-b bg-woof-pearl/5 pt-32 pb-8">
                 <div className="container-wide relative z-10 px-6 lg:px-12">
                     <div>

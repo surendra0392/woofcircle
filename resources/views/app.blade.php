@@ -34,6 +34,85 @@
 
         <title data-inertia>{{ config('app.name', 'WoofCircle') }}</title>
 
+        {{-- Global SEO Meta Fallbacks --}}
+        @php
+            $defaultMetaTitle = !empty($settings['seo_meta_title']) ? $settings['seo_meta_title'] : 'WoofCircle | India\'s Premier Ethical Pet Platform';
+            $defaultMetaDesc = !empty($settings['seo_meta_description']) ? $settings['seo_meta_description'] : 'Connect with registered breeders, verified veterinary clinics, trainers, boarding services, and find healthy puppies and dogs for adoption on WoofCircle.';
+            $defaultKeywords = !empty($settings['seo_keywords']) ? $settings['seo_keywords'] : 'dogs, puppies, dog breeders, stud services, pet adoption, veterinary clinics, dog trainers, dog boarding, India, WoofCircle';
+            $defaultOgImage = asset('images/logo-icon.png');
+            $currentCanonical = url()->current();
+        @endphp
+        <meta name="description" content="{{ $defaultMetaDesc }}">
+        <meta name="keywords" content="{{ $defaultKeywords }}">
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+        <link rel="canonical" href="{{ $currentCanonical }}">
+
+        {{-- Open Graph / Social --}}
+        <meta property="og:site_name" content="WoofCircle">
+        <meta property="og:type" content="website">
+        <meta property="og:locale" content="en_IN">
+        <meta property="og:url" content="{{ $currentCanonical }}">
+        <meta property="og:title" content="{{ $defaultMetaTitle }}">
+        <meta property="og:description" content="{{ $defaultMetaDesc }}">
+        <meta property="og:image" content="{{ $defaultOgImage }}">
+
+        {{-- Twitter Card --}}
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@WoofCircle">
+        <meta name="twitter:title" content="{{ $defaultMetaTitle }}">
+        <meta name="twitter:description" content="{{ $defaultMetaDesc }}">
+        <meta name="twitter:image" content="{{ $defaultOgImage }}">
+
+        {{-- Google Search Console Verification --}}
+        @if(!empty($settings['google_site_verification']))
+            <meta name="google-site-verification" content="{{ trim($settings['google_site_verification']) }}">
+        @endif
+
+        {{-- Global Organization & WebSite JSON-LD Schema --}}
+        <script type="application/ld+json">
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@graph' => [
+                [
+                    '@type' => 'Organization',
+                    '@id' => url('/') . '/#organization',
+                    'name' => 'WoofCircle',
+                    'url' => url('/'),
+                    'logo' => [
+                        '@type' => 'ImageObject',
+                        'url' => $defaultOgImage,
+                        'caption' => 'WoofCircle Logo'
+                    ],
+                    'description' => "India's premier ethical pet platform connecting pet lovers with verified breeders, stud dogs, adoptions, and veterinary care.",
+                    'sameAs' => [
+                        'https://www.instagram.com/woofcircle',
+                        'https://www.facebook.com/woofcircle',
+                        'https://twitter.com/woofcircle'
+                    ]
+                ],
+                [
+                    '@type' => 'WebSite',
+                    '@id' => url('/') . '/#website',
+                    'url' => url('/'),
+                    'name' => 'WoofCircle',
+                    'description' => $defaultMetaDesc,
+                    'publisher' => [
+                        '@id' => url('/') . '/#organization'
+                    ],
+                    'potentialAction' => [
+                        '@type' => 'SearchAction',
+                        'target' => [
+                            '@type' => 'EntryPoint',
+                            'urlTemplate' => url('/puppies') . '?search={search_term_string}'
+                        ],
+                        'query-input' => 'required name=search_term_string'
+                    ],
+                    'inLanguage' => 'en-IN'
+                ]
+            ]
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+        </script>
+
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">

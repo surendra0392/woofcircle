@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import PublicLayout from '@/layouts/public/public-layout';
+import SeoHead from '@/components/SeoHead';
 import { Litter, SharedData } from '@/types'; // Temporarily defining HealthRecord here if not in global types
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import {
@@ -93,7 +94,31 @@ export default function PuppyShow({ litter, healthRecords, hasHealthRecords, exi
     };
     return (
         <PublicLayout>
-            <Head title={`${displayTitle} | Premium ${litter.breed?.name || 'Puppy'} Marketplace | ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`${displayTitle} - ${litter.breed?.name || 'Purebred'} Puppies for Sale in ${litter.city?.name || 'India'} | WoofCircle`}
+                description={litter.description ? litter.description.slice(0, 155) : `Adopt or buy ${displayTitle} (${litter.breed?.name || 'dog'}). Health verified, vaccinated, and certified ethical pedigree on WoofCircle.`}
+                keywords={`${litter.breed?.name || 'puppy'} for sale, buy ${litter.breed?.name} ${litter.city?.name || 'India'}, ethical breeder puppies, KCI registered ${litter.breed?.name}`}
+                image={litter.featured_image_url || '/images/logo-icon.png'}
+                type="product"
+                schema={{
+                    "@context": "https://schema.org",
+                    "@type": "Product",
+                    "name": displayTitle,
+                    "description": litter.description || `${displayTitle} available from certified ethical breeder on WoofCircle.`,
+                    "image": litter.featured_image_url ? [litter.featured_image_url] : ["https://woofcircle.in/images/logo-icon.png"],
+                    "brand": {
+                        "@type": "Brand",
+                        "name": litter.breed?.name || "Purebred Canine"
+                    },
+                    "offers": {
+                        "@type": "Offer",
+                        "priceCurrency": "INR",
+                        "price": litter.price || (litter.price_min ? litter.price_min : "0"),
+                        "availability": litter.is_available ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+                        "url": `https://woofcircle.in/puppies/${litter.slug || litter.id}`
+                    }
+                }}
+            />
             <div className="bg-woof-pearl/5 border-b border-woof-charcoal/5 relative overflow-hidden pt-32 pb-16 text-woof-charcoal">
                 <div className="container-wide relative z-10 px-6 lg:px-12">
                     <div className="animate-reveal" style={{ animationDelay: '0.2s' }}>

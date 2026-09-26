@@ -1,4 +1,5 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import AppLayout from '@/layouts/app-layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -68,7 +69,7 @@ export default function Pedigree() {
 
     return (
         <AppLayout breadcrumbs={[{ title: 'My Pets', href: route('dashboard') }, { title: pet.name, href: route('dashboard') }, { title: 'Pedigree', href: '#' }]}>
-            <Head title={`${pet.name} Pedigree`} />
+            <SeoHead title={`${pet.name} Pedigree`} noindex={true} />
             
             <div className="container-wide px-6 lg:px-12 py-8 max-w-6xl space-y-8">
                 

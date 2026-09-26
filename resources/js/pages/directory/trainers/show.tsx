@@ -3,7 +3,8 @@ import { ReviewSection } from '@/components/review-section';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public/public-layout';
 import { Review, SharedData } from '@/types';
-import { Head, usePage, router } from '@inertiajs/react';
+import { usePage, router } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { useState, useEffect } from 'react';
 import ShareDialog from '@/components/public/share-dialog';
 import BookMasteryDialog from '@/components/public/book-mastery-dialog';
@@ -65,7 +66,38 @@ export default function TrainerShow({ trainer, pets = [] }: PageProps) {
 
     return (
         <PublicLayout>
-            <Head title={`${displayName} | Professional Canine Coach | ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`${displayName} - Certified Dog Trainer in ${trainer.city?.name || 'India'} | ${settings.site_name}`}
+                description={trainer.description ? trainer.description.slice(0, 160) : `${displayName} is a certified canine trainer in ${trainer.city?.name || 'India'}. Book sessions, read verified reviews, and view training programs.`}
+                image={trainer.logo_url || undefined}
+                type="profile"
+                keywords={`${displayName}, dog trainer ${trainer.city?.name || 'India'}, puppy training ${trainer.city?.name || ''}, canine behaviorist`}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'LocalBusiness',
+                    name: displayName,
+                    description: trainer.description || `${displayName} is a certified canine trainer in ${trainer.city?.name || 'India'}.`,
+                    image: trainer.logo_url ? [trainer.logo_url] : undefined,
+                    telephone: trainer.phone || undefined,
+                    address: {
+                        '@type': 'PostalAddress',
+                        streetAddress: trainer.address || undefined,
+                        addressLocality: trainer.city?.name || undefined,
+                        addressRegion: trainer.state?.name || undefined,
+                        addressCountry: 'IN',
+                    },
+                    ...(trainer.average_rating && trainer.reviews_count
+                        ? {
+                              aggregateRating: {
+                                  '@type': 'AggregateRating',
+                                  ratingValue: trainer.average_rating,
+                                  reviewCount: trainer.reviews_count,
+                              },
+                          }
+                        : {}),
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <div className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">
                 {/* Immersive Background */}
 

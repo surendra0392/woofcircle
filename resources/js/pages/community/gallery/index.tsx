@@ -8,7 +8,8 @@ import { Pagination } from '@/components/ui/pagination';
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { SharedData } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import {
     ArrowRight,
     ArrowUpRight,
@@ -372,7 +373,18 @@ export default function GalleryIndex({
 
     return (
         <PublicLayout>
-            <Head title={`Community Gallery | ${settings.site_name} Moments`} />
+            <SeoHead
+                title={`Dog Photos & Community Gallery | ${settings.site_name}`}
+                description="Explore real photos, editorial albums, purebred spotlights, and heartwarming moments shared by canine lovers across India."
+                type="website"
+                keywords="dog photos India, puppy pictures, canine photo gallery, pet photography, dog community"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'ImageGallery',
+                    name: 'WoofCircle Dog Photos & Community Gallery',
+                    description: 'Explore dog photos, curated albums, and community moments across India.',
+                }}
+            />
 
             {/* --- CINEMATIC CLEAN HERO --- */}
             <section className="border-woof-charcoal/5 relative overflow-hidden border-b bg-woof-pearl/5 pt-32 pb-8">

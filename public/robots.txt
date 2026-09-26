@@ -1,2 +1,53 @@
+# WoofCircle Robots.txt
+# https://woofcircle.in
+
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /agent/
+Disallow: /hr/
+Disallow: /support/
+Disallow: /dashboard/
+Disallow: /settings/
+Disallow: /breeder/profile
+Disallow: /pet-shop/profile
+Disallow: /vet/profile
+Disallow: /boarding/profile
+Disallow: /welfare/profile
+Disallow: /api/
+Disallow: /broadcasting/
+Disallow: /password/
+Disallow: /email/
+
+# AI Search Crawlers & Citation Bots (Allowed for Generative Engine Optimization / GEO)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# Dynamic XML Sitemaps
+Sitemap: https://woofcircle.in/sitemap.xml
+Sitemap: https://woofcircle.in/sitemap-pages.xml
+Sitemap: https://woofcircle.in/sitemap-breeds.xml
+Sitemap: https://woofcircle.in/sitemap-litters.xml
+Sitemap: https://woofcircle.in/sitemap-studs.xml
+Sitemap: https://woofcircle.in/sitemap-adoptions.xml
+Sitemap: https://woofcircle.in/sitemap-directories.xml
+Sitemap: https://woofcircle.in/sitemap-articles.xml
+Sitemap: https://woofcircle.in/sitemap-events.xml

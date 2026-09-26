@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { City, SharedData, State } from '@/types';
-import { Head, router, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { ChevronDown, Home, Info, RotateCcw, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 interface Boarding {
@@ -117,7 +118,23 @@ export default function BoardingListing({
     };
     return (
         <PublicLayout>
-            <Head title={`Elite Boarding & Daycare | ${settings.site_name} Directory`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`Luxury Dog Boarding & Pet Daycare in India | ${settings.site_name}`}
+                description="Find verified dog boarding kennels, pet resorts, luxury suites with 24/7 CCTV monitoring, and pet daycare services across Bangalore, Mumbai, Delhi, and India."
+                type="website"
+                keywords="dog boarding India, pet boarding Bangalore, dog daycare Mumbai, pet resort Delhi, luxury pet stay"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'CollectionPage',
+                    name: 'Luxury Dog Boarding & Pet Daycare in India',
+                    description: 'Find verified dog boarding kennels, pet resorts, and daycare retreats across India.',
+                    about: {
+                        '@type': 'Thing',
+                        name: 'Pet Boarding and Daycare Services in India',
+                    },
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <section className="border-woof-charcoal/5 relative overflow-hidden border-b bg-woof-pearl/5 pt-32 pb-8">
                 <div className="container-wide relative z-10 px-6 lg:px-12">
                     <div>

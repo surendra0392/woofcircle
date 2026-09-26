@@ -75,7 +75,7 @@ export default function SupportLayout({ children, title }: PropsWithChildren<{ t
     return (
         <div className="bg-[#fcfbf9] min-h-screen w-full font-sans antialiased text-woof-charcoal">
             <Toaster position="top-right" theme="light" closeButton />
-            {title ? <SeoHead title={title} /> : <SeoHead />}
+            {title ? <SeoHead title={title} noindex={true} /> : <SeoHead noindex={true} />}
             
             {mobileOpen && <div className="fixed inset-0 z-40 bg-woof-charcoal/40 backdrop-blur-sm md:hidden" onClick={() => setMobileOpen(false)} />}
             

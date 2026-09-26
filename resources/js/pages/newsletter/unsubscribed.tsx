@@ -1,10 +1,11 @@
 import PublicLayout from "@/layouts/public/public-layout";
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 
 export default function Unsubscribed({ email }: { email: string }) {
     return (
         <PublicLayout>
-            <Head title="Unsubscribed | Newsletter" />
+            <SeoHead title="Unsubscribed | Newsletter" noindex={true} />
 
             <div className="min-h-[50vh] flex items-center justify-center bg-stone-50 py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full text-center space-y-8">

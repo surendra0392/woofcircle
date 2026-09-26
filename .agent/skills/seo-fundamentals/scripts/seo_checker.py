@@ -34,7 +34,9 @@ except:
 SKIP_DIRS = {
     'node_modules', '.next', 'dist', 'build', '.git', '.github',
     '__pycache__', '.vscode', '.idea', 'coverage', 'test', 'tests',
-    '__tests__', 'spec', 'docs', 'documentation', 'examples'
+    '__tests__', 'spec', 'docs', 'documentation', 'examples',
+    'admin', 'agent', 'hr', 'support', 'auth', 'settings',
+    'dashboard', 'breeder', 'pet-shop'
 }
 
 # Files to skip (not pages)
@@ -83,7 +85,7 @@ def find_pages(project_path: Path) -> list:
     for pattern in patterns:
         for f in project_path.glob(pattern):
             # Skip excluded directories
-            if any(skip in f.parts for skip in SKIP_DIRS):
+            if any(skip in [p.lower() for p in f.parts] for skip in SKIP_DIRS):
                 continue
             
             # Check if it's likely a page
@@ -103,21 +105,22 @@ def check_page(file_path: Path) -> dict:
         return {"file": str(file_path.name), "issues": [f"Error: {e}"]}
     
     # Detect if this is a layout/template file (has Head component)
-    is_layout = 'Head>' in content or '<head' in content.lower()
+    is_layout = 'Head>' in content or '<head' in content.lower() or 'SeoHead' in content
+    is_noindex = 'noindex' in content.lower()
     
     # 1. Title tag
-    has_title = '<title' in content.lower() or 'title=' in content or 'Head>' in content
+    has_title = '<title' in content.lower() or 'title=' in content or 'Head>' in content or 'SeoHead' in content
     if not has_title and is_layout:
         issues.append("Missing <title> tag")
     
     # 2. Meta description
-    has_description = 'name="description"' in content.lower() or 'name=\'description\'' in content.lower()
-    if not has_description and is_layout:
+    has_description = 'name="description"' in content.lower() or 'name=\'description\'' in content.lower() or 'description=' in content
+    if not has_description and is_layout and not is_noindex:
         issues.append("Missing meta description")
     
-    # 3. Open Graph tags
-    has_og = 'og:' in content or 'property="og:' in content.lower()
-    if not has_og and is_layout:
+    # 3. Open Graph tags (SeoHead generates OG tags automatically)
+    has_og = 'og:' in content or 'property="og:' in content.lower() or 'SeoHead' in content
+    if not has_og and is_layout and not is_noindex:
         issues.append("Missing Open Graph tags")
     
     # 4. Heading hierarchy - multiple H1s

@@ -1,14 +1,26 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { Award, CheckCircle, FileCheck, Globe, Heart, Home, Search, ShieldCheck, Sparkles, Users } from 'lucide-react';
 
 export default function About() {
     const { settings } = usePage<SharedData>().props;
     return (
         <PublicLayout>
-            <Head title={`About ${settings.site_name}`} />
+            <SeoHead
+                title={`About Us - India's Premier Ethical Canine Platform | ${settings.site_name}`}
+                description={`${settings.site_name} is India's verified canine ecosystem dedicated to ethical breeding, pedigree preservation, veterinary excellence, and compassionate pet parenting.`}
+                type="website"
+                keywords="about woofcircle, ethical dog breeding India, verified canine network, pet care standards India"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'AboutPage',
+                    name: `About ${settings.site_name}`,
+                    description: `${settings.site_name} is India's premium ethical canine ecosystem connecting pet parents with verified breeders, veterinarians, and trainers.`,
+                }}
+            />
 
             {/* Hero Section */}
             <section className="bg-[#fcfbf9] border-b border-[#e8ded1] relative overflow-hidden pt-36 pb-20 sm:pt-44 sm:pb-28">

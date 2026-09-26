@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Pagination } from '@/components/ui/pagination';
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import {
     ArrowLeft,
     Brain,
@@ -71,7 +72,12 @@ export default function ForumCategory({ category, threads }: { category: Categor
 
     return (
         <PublicLayout>
-            <Head title={`${category.name} - Discussions | ${settings.site_name} Forum`} />
+            <SeoHead
+                title={`${category.name} Discussions - Canine Community Forum | ${settings.site_name}`}
+                description={category.description ? category.description.slice(0, 160) : `Join discussions on ${category.name} in the WoofCircle canine community forum.`}
+                type="website"
+                keywords={`${category.name}, dog forum, canine discussions, pet advice`}
+            />
 
             {/* --- CINEMATIC HEADER --- */}
             <section className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">

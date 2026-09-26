@@ -207,7 +207,7 @@ export default function ArticlesPage({ articles, categories, filters }: any) {
                                         <td className="px-6 py-4">
                                             {item.featured_image ? (
                                                 <div className="h-11 w-16 overflow-hidden rounded-2xl border border-[#e8ded1] shadow-2xs">
-                                                    <img src={item.featured_image} alt="" className="h-full w-full object-cover" />
+                                                    <img src={item.featured_image} alt={item.title || 'Article thumbnail'} className="h-full w-full object-cover" />
                                                 </div>
                                             ) : (
                                                 <div className="flex h-11 w-16 items-center justify-center rounded-2xl border border-[#e8ded1] bg-[#fcfbf9]">

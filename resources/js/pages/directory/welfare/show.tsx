@@ -4,7 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public/public-layout';
 import { Review, SharedData } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { useState, useEffect } from 'react';
 import ShareDialog from '@/components/public/share-dialog';
 import {
@@ -66,7 +67,37 @@ export default function WelfareShow({ welfare }: PageProps) {
 
     return (
         <PublicLayout>
-            <Head title={`${displayName} | Support Animal Welfare | ${settings.site_name}`} />
+            <SeoHead
+                title={`${displayName} - Animal Welfare & Rescue in ${welfare.city?.name || 'India'} | ${settings.site_name}`}
+                description={welfare.description ? welfare.description.slice(0, 160) : `${displayName} is an animal welfare and rescue organization in ${welfare.city?.name || 'India'}. Support rescue, adoption, and care for dogs in need.`}
+                image={welfare.logo_url || undefined}
+                type="profile"
+                keywords={`${displayName}, animal welfare ${welfare.city?.name || 'India'}, dog rescue ${welfare.city?.name || ''}, animal shelter`}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'AnimalShelter',
+                    name: displayName,
+                    description: welfare.description || `${displayName} is an animal welfare and rescue organization in ${welfare.city?.name || 'India'}.`,
+                    image: welfare.logo_url ? [welfare.logo_url] : undefined,
+                    telephone: welfare.phone || undefined,
+                    address: {
+                        '@type': 'PostalAddress',
+                        streetAddress: welfare.address || undefined,
+                        addressLocality: welfare.city?.name || undefined,
+                        addressRegion: welfare.state?.name || undefined,
+                        addressCountry: 'IN',
+                    },
+                    ...(welfare.average_rating && welfare.reviews_count
+                        ? {
+                              aggregateRating: {
+                                  '@type': 'AggregateRating',
+                                  ratingValue: welfare.average_rating,
+                                  reviewCount: welfare.reviews_count,
+                              },
+                          }
+                        : {}),
+                }}
+            />
             {/* --- CINEMATIC HERO SECTION --- */}
 
             <div className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">

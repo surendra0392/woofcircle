@@ -1,5 +1,6 @@
 import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import PublicLayout from '@/layouts/public/public-layout';
 import { Trophy, Flame, User, Award } from 'lucide-react';
 import { getInitials } from '@/hooks/use-initials';
@@ -8,7 +9,11 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 export default function Leaderboard({ topKarma, topStreaks }: any) {
     return (
         <PublicLayout>
-            <Head title="Community Leaderboard - Woof Circle" />
+            <SeoHead
+                title="Community Leaderboard & Hall of Fame | WoofCircle"
+                description="Discover the top canine community contributors, pet parent karma leaders, and active members on WoofCircle."
+                type="website"
+            />
 
             <section className="border-b border-[#e8ded1] bg-[#fcfbf9] pt-32 pb-12">
                 <div className="container-wide px-6 lg:px-12">

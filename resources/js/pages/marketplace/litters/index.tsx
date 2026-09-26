@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { Breed, City, Litter, PaginatedResponse, SharedData, State } from '@/types';
-import { Head, router, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { ChevronDown, Dog, RotateCcw, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 interface PageProps {
@@ -89,7 +90,23 @@ export default function LittersListing({ litters, breeds, states, filters }: Pag
     };
     return (
         <PublicLayout>
-            <Head title={`Elite Verified Litters | ${settings.site_name} Marketplace`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`Elite Verified Litters & Puppies for Sale in India | ${settings.site_name}`}
+                description="Browse certified pedigreed litters from ethical dog breeders across India. Health-tested, vaccinated, and microchipped puppies available in top cities."
+                type="website"
+                keywords="dog litters India, buy puppies, pedigreed puppies Bangalore, certified litters Mumbai, ethical breeder litters Delhi"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'CollectionPage',
+                    name: 'Elite Verified Litters in India',
+                    description: 'Browse certified pedigreed litters from ethical dog breeders across India on WoofCircle.',
+                    about: {
+                        '@type': 'Thing',
+                        name: 'Puppy Litters in India',
+                    },
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <section className="border-woof-charcoal/5 relative overflow-hidden border-b bg-woof-pearl/5 pt-32 pb-8">
                 <div className="container-wide relative z-10 px-6 lg:px-12">
                     <div>

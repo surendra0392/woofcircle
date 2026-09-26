@@ -139,6 +139,13 @@ class SettingSeeder extends Seeder
                 'type' => 'text',
                 'group' => 'seo',
             ],
+            [
+                'key' => 'google_site_verification',
+                'label' => 'Google Search Console Verification Token',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'seo',
+            ],
             
             // Payments - Razorpay Gateway
             [

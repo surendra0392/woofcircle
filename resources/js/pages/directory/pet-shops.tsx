@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { City, PaginatedResponse, SharedData, State } from '@/types';
-import { Head, router, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { ChevronDown, Info, RotateCcw, Search, ShoppingBag } from 'lucide-react';
 import { useEffect, useState } from 'react';
 interface PetShop {
@@ -126,7 +127,23 @@ export default function PetShopsListing({
     };
     return (
         <PublicLayout>
-            <Head title={`Elite Pet Shops & Boutiques | ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`Pet Shops & Canine Boutiques in India | ${settings.site_name}`}
+                description="Browse verified pet shops, canine nutrition stores, pet pharmacies, grooming supplies, and accessories across Bangalore, Mumbai, Delhi, and India."
+                type="website"
+                keywords="pet shop India, dog food stores Bangalore, pet supplies Mumbai, dog accessories Delhi, pet boutique India"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'CollectionPage',
+                    name: 'Pet Shops & Canine Boutiques in India',
+                    description: 'Browse verified pet shops and canine nutrition stores across India.',
+                    about: {
+                        '@type': 'Thing',
+                        name: 'Pet Shops and Supplies in India',
+                    },
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <section className="border-woof-charcoal/5 relative overflow-hidden border-b bg-woof-pearl/5 pt-32 pb-8">
                 <div className="container-wide relative z-10 px-6 lg:px-12">
                     <div>

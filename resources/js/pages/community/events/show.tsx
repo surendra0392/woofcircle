@@ -5,7 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import {
     ArrowLeft,
     Calendar,
@@ -98,7 +99,39 @@ export default function EventShow({ event, isRegistered }: PageProps) {
 
     return (
         <PublicLayout>
-            <Head title={`${event.title} | Dog & Pet Community Events | ${settings.site_name}`} />
+            <SeoHead
+                title={`${event.title} - Canine Event in ${event.city?.name || 'India'} | ${settings.site_name}`}
+                description={event.description ? event.description.slice(0, 160) : `Join ${event.title} organized by ${event.organizer_name} in ${event.city?.name || 'India'}. Register online on WoofCircle.`}
+                image={event.image_url || undefined}
+                type="event"
+                keywords={`${event.title}, dog event ${event.city?.name || 'India'}, dog show, pet meetup, ${event.event_type?.name || 'canine event'}`}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'Event',
+                    name: event.title,
+                    description: event.description ? event.description.slice(0, 160) : `${event.title} in ${event.city?.name || 'India'}.`,
+                    image: event.image_url ? [event.image_url] : undefined,
+                    startDate: event.start_date,
+                    endDate: event.end_date || event.start_date,
+                    eventStatus: 'https://schema.org/EventScheduled',
+                    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+                    location: {
+                        '@type': 'Place',
+                        name: event.venue_name || `${event.city?.name || 'Venue'} Pet Arena`,
+                        address: {
+                            '@type': 'PostalAddress',
+                            streetAddress: event.address || undefined,
+                            addressLocality: event.city?.name || undefined,
+                            addressRegion: event.state?.name || undefined,
+                            addressCountry: 'IN',
+                        },
+                    },
+                    organizer: {
+                        '@type': 'Organization',
+                        name: event.organizer_name || 'WoofCircle Community',
+                    },
+                }}
+            />
 
             {/* --- CINEMATIC HERO --- */}
             <section className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">

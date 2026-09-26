@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PublicLayout from '@/layouts/public/public-layout';
-import { Head, Link, router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import PetPassportCard from '@/components/pets/PetPassportCard';
 import MedicalRecordExportModal from '@/components/pets/MedicalRecordExportModal';
 import { ShieldCheck, CheckCircle2, Award, Calendar, FileText, ArrowRight, Link as LinkIcon, Phone, Mail, User, Clock, AlertTriangle, AlertCircle, Dna, Heart } from 'lucide-react';
@@ -94,7 +95,13 @@ export default function PetPassportVerificationPage({ pet, verification_status, 
 
     return (
         <PublicLayout>
-            <Head title={`${pet.name} | Official Pet Passport (${pet.passport_number})`} />
+            <SeoHead
+                title={`${pet.name} - Official Digital Pet Passport (${pet.passport_number}) | WoofCircle`}
+                description={`Official digital pet passport for ${pet.name} (${pet.breed?.name || 'Canine'}). View verified vaccination history, lineage, microchip details, and medical milestones.`}
+                image={pet.profile_image_url || undefined}
+                type="profile"
+                keywords={`${pet.name}, pet passport, ${pet.passport_number}, dog vaccination records, ${pet.breed?.name || 'dog'}`}
+            />
 
             <div className="bg-[#fcfbf9] min-h-screen pt-36 sm:pt-44 pb-24 text-woof-charcoal">
                 <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-12">

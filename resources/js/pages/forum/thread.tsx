@@ -6,7 +6,8 @@ import { Pagination } from '@/components/ui/pagination';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import {
     ArrowLeft,
     Check,
@@ -99,7 +100,30 @@ export default function ForumThread() {
 
     return (
         <PublicLayout>
-            <Head title={`${thread.title} - ${thread.category.name} | ${settings.site_name} Forum`} />
+            <SeoHead
+                title={`${thread.title} - ${thread.category.name} | ${settings.site_name} Forum`}
+                description={thread.body ? thread.body.slice(0, 160) : `Discussion on ${thread.title} in the ${thread.category.name} section of WoofCircle Forum.`}
+                type="article"
+                publishedTime={thread.created_at}
+                author={thread.user.name}
+                keywords={`${thread.title}, dog discussion, ${thread.category.name}, canine community forum`}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'DiscussionForumPosting',
+                    headline: thread.title,
+                    articleBody: thread.body.slice(0, 500),
+                    author: {
+                        '@type': 'Person',
+                        name: thread.user.name,
+                    },
+                    datePublished: thread.created_at,
+                    interactionStatistic: {
+                        '@type': 'InteractionCounter',
+                        interactionType: 'https://schema.org/CommentAction',
+                        userInteractionCount: thread.reply_count,
+                    },
+                }}
+            />
 
             {/* --- CINEMATIC HEADER --- */}
             <section className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">

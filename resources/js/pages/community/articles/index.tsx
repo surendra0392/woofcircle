@@ -8,7 +8,8 @@ import { Pagination } from '@/components/ui/pagination';
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { SharedData } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { ArrowRight, BookOpen, ChevronDown, Clock, RotateCcw, Search, User } from 'lucide-react';
 import { useState } from 'react';
 
@@ -87,7 +88,23 @@ export default function ArticlesIndex({
     };
     return (
         <PublicLayout>
-            <Head title={`Dog Care, Training & Health Articles | ${settings.site_name} Blog`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`Canine Knowledge Hub - Dog Care, Training & Health Articles | ${settings.site_name}`}
+                description="Expert articles and veterinarian-reviewed guides on canine health, nutrition, puppy socialization, positive dog training, and breed care in India."
+                type="website"
+                keywords="dog care blog, dog health articles India, puppy training tips, vet advice dogs, canine nutrition guide"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'CollectionPage',
+                    name: 'WoofCircle Canine Knowledge Hub',
+                    description: 'Expert articles and veterinarian-reviewed guides on canine health, nutrition, and training.',
+                    about: {
+                        '@type': 'Thing',
+                        name: 'Canine Care and Veterinary Advice',
+                    },
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <section className="border-b border-[#e8ded1] bg-[#fcfbf9] pt-32 pb-12">
                 <div className="container-wide relative z-10 px-6 lg:px-12">
                     <div>

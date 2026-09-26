@@ -1,4 +1,5 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import PublicLayout from '@/layouts/public/public-layout';
 import { Button } from '@/components/ui/button';
 import {
@@ -197,13 +198,12 @@ export default function Pricing() {
 
     return (
         <PublicLayout>
-            <Head>
-                <title>Membership Privileges & Tiers | WoofCircle</title>
-                <meta
-                    name="description"
-                    content="Explore WoofCircle membership tiers. Unlock tamper-proof digital passports, verified pedigree trees, priority directory placements, and executive kennel management."
-                />
-            </Head>
+            <SeoHead
+                title="Membership Privileges & Plans | WoofCircle"
+                description="Explore WoofCircle membership tiers. Unlock tamper-proof digital passports, verified pedigree trees, priority directory placements, and executive kennel management."
+                type="website"
+                keywords="woofcircle membership, breeder subscription India, pet passport pricing, canine club privileges"
+            />
 
             {/* --- HERO SECTION --- */}
             <div className="relative overflow-hidden bg-gradient-to-b from-[#0e0d0a] via-[#14120e] to-[#0e0d0a] pt-32 pb-24 text-white border-b border-white/5">

@@ -140,7 +140,24 @@ export default function HomePage({ litters, breeds, states, articles = [] }: Pag
 
     return (
         <PublicLayout>
-            <SeoHead title="Woof Circle | The Ultimate Pet Platform" />
+            <SeoHead
+                title="WoofCircle | India's Premier Ethical Pet Platform | Puppies, Studs & Adoption"
+                description="Find verified ethical dog breeders, vaccinated puppies, champion stud services, pet adoption rescues, and trusted veterinary clinics across India on WoofCircle."
+                keywords="dogs in India, buy puppies Bangalore, ethical dog breeders Mumbai, dog stud service Delhi, pet adoption India, vet clinics near me, KCI registered dogs"
+                url="https://woofcircle.in"
+                schema={{
+                    "@context": "https://schema.org",
+                    "@type": "WebSite",
+                    "name": "WoofCircle",
+                    "url": "https://woofcircle.in",
+                    "description": "India's premier ethical dog platform connecting pet lovers with verified breeders, stud dogs, rescues, and veterinary care.",
+                    "potentialAction": {
+                        "@type": "SearchAction",
+                        "target": "https://woofcircle.in/puppies?search={search_term_string}",
+                        "query-input": "required name=search_term_string"
+                    }
+                }}
+            />
             <section className="bg-woof-pearl/5 relative overflow-hidden pt-32 pb-20 lg:pt-32 lg:pb-16">
                 <div className="relative z-10 mx-auto max-w-[1440px] px-6 lg:px-12">
                     <div className="grid items-center gap-16 lg:grid-cols-2">

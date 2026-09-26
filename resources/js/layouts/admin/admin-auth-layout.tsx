@@ -28,7 +28,10 @@ export default function AdminAuthLayout({ children, title, description, heading,
 
     return (
         <div className="bg-[#fcfbf9] relative flex min-h-screen items-center justify-center overflow-hidden font-sans antialiased text-woof-charcoal">
-            <Head title={`${title} | Admin`} />
+            <Head>
+                <title>{`${title} | Admin`}</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Head>
             
             {/* Ambient Background Glow */}
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-woof-gold/10 via-transparent to-transparent" />

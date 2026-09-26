@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { Breed, City, PaginatedResponse, SharedData, State, Stud } from '@/types';
+import SeoHead from '@/components/SeoHead';
 import { Head, router, usePage } from '@inertiajs/react';
 import { ChevronDown, Dog, Info, RotateCcw, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -110,7 +111,19 @@ export default function StudsListing({
 
     return (
         <PublicLayout>
-            <Head title={`Verified Champion Stud Services | ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`Verified Champion Dog Stud Services in India | ${settings.site_name || 'WoofCircle'}`}
+                description="Connect with India's top KCI registered, health-cleared champion stud dogs across Bangalore, Mumbai, Delhi, and Hyderabad with verified pedigree records on WoofCircle."
+                keywords="dog stud service India, champion stud dogs, KCI registered stud service, stud dog Bangalore, stud dog Mumbai, labrador stud service, golden retriever stud"
+                url="https://woofcircle.in/studs"
+                schema={{
+                    "@context": "https://schema.org",
+                    "@type": "CollectionPage",
+                    "name": "Verified Champion Stud Dogs in India",
+                    "description": "Connect with India's top KCI registered, health-cleared champion stud dogs with verified pedigree records.",
+                    "url": "https://woofcircle.in/studs"
+                }}
+            />
             <section className="border-woof-charcoal/5 relative overflow-hidden border-b bg-woof-pearl/5 pt-32 pb-8">
                 <div className="container-wide relative z-10 px-6 lg:px-12">
                     <div>

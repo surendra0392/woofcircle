@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PublicLayout from '@/layouts/public/public-layout';
-import { Head, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import PetPassportCard from '@/components/pets/PetPassportCard';
 import MedicalRecordExportModal from '@/components/pets/MedicalRecordExportModal';
 import { ShieldCheck, Search, CheckCircle2, Award, FileText, AlertCircle, Sparkles, QrCode, ArrowRight, Link, Phone, Mail, User, Clock, AlertTriangle } from 'lucide-react';
@@ -83,7 +84,12 @@ export default function PetPassportSearchPortal({ pet, search_query = '', not_fo
 
     return (
         <PublicLayout>
-            <Head title="Digital Pet Passport Verification Portal | Woof Circle Registry" />
+            <SeoHead
+                title="Verify Digital Pet Passport & Vaccination Records | WoofCircle"
+                description="Verify authentic digital pet passports, immunization certificates, microchip records, and verified health clearances on India's national canine registry."
+                type="website"
+                keywords="verify pet passport, dog passport verification, canine health records, dog vaccination check India"
+            />
 
             <div className="min-h-screen bg-[#fcfbf9] pt-36 sm:pt-44 pb-24 text-woof-charcoal">
                 <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-10">

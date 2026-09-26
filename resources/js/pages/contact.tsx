@@ -1,6 +1,7 @@
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { Clock, Mail, MapPin, MessageSquare, Phone, Send } from 'lucide-react';
 import { FormEventHandler } from 'react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
@@ -16,7 +17,18 @@ export default function Contact() {
 
     return (
         <PublicLayout>
-            <Head title="Contact Us | WoofCircle" />
+            <SeoHead
+                title={`Contact Concierge & Support | ${settings.site_name}`}
+                description={`Get in touch with the ${settings.site_name} team for inquiries regarding dog adoption, verified breeder registration, vet listings, or general assistance.`}
+                type="website"
+                keywords="contact woofcircle, pet support India, dog breeder support, canine assistance"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'ContactPage',
+                    name: `Contact ${settings.site_name}`,
+                    description: `Get in touch with the ${settings.site_name} concierge team.`,
+                }}
+            />
 
             {/* Hero Section */}
             <section className="bg-[#fcfbf9] border-b border-[#e8ded1] pt-36 pb-16 sm:pt-44 sm:pb-20">

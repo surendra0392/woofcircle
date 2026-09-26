@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public/public-layout';
 
 import { AdoptionListing, SharedData } from '@/types';
-import { Head, Link, usePage, router } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { useState, useEffect } from 'react';
 import {
     Activity,
@@ -56,7 +57,28 @@ export default function AdoptionShow({ listing, healthRecords = [], hasHealthRec
 
     return (
         <PublicLayout>
-            <Head title={`${displayTitle} | Adopt a ${listing.breed?.name || 'Pet'} | ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`${displayTitle} | Adopt a ${listing.breed?.name || 'Pet'} in ${listing.city?.name || 'India'}`}
+                description={listing.description ? listing.description.slice(0, 160) : `Meet ${displayTitle}, a lovely ${listing.breed?.name || 'dog'} available for adoption in ${listing.city?.name || 'India'} on WoofCircle. Give them a loving forever home.`}
+                image={listing.featured_image_url || undefined}
+                type="product"
+                keywords={`${listing.breed?.name || 'dog'} adoption, adopt dog ${listing.city?.name || 'India'}, rescue pet ${listing.city?.name || ''}, woofcircle adoption`}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'Product',
+                    name: displayTitle,
+                    description: listing.description || `Adopt ${displayTitle} in ${listing.city?.name || 'India'} on WoofCircle.`,
+                    image: listing.featured_image_url ? [listing.featured_image_url] : undefined,
+                    category: 'Pet Adoption',
+                    offers: {
+                        '@type': 'Offer',
+                        price: listing.adoption_fee || 0,
+                        priceCurrency: 'INR',
+                        availability: listing.status === 'available' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+                    },
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <div className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">
                 {/* Immersive Background */}
 

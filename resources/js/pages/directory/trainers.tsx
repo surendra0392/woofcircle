@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { City, PaginatedResponse, SharedData, State } from '@/types';
-import { Head, router, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { ChevronDown, GraduationCap, Info, RotateCcw, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 interface Trainer {
@@ -116,7 +117,23 @@ export default function TrainersListing({
     };
     return (
         <PublicLayout>
-            <Head title={`Expert Dog Trainers | ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`Certified Dog Trainers & Behaviorists in India | ${settings.site_name}`}
+                description="Find certified master dog trainers, puppy obedience classes, behavior modification consultants, and agility training across Bangalore, Mumbai, Delhi, and India."
+                type="website"
+                keywords="dog trainers India, canine behaviorist, puppy training classes Bangalore, dog obedience trainer Mumbai, dog training Delhi"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'CollectionPage',
+                    name: 'Certified Dog Trainers in India',
+                    description: 'Find certified master dog trainers and canine behaviorists across India.',
+                    about: {
+                        '@type': 'Thing',
+                        name: 'Dog Training Services in India',
+                    },
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <section className="border-woof-charcoal/5 relative overflow-hidden border-b bg-woof-pearl/5 pt-32 pb-8">
                 <div className="container-wide relative z-10 px-6 lg:px-12">
                     <div>

@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import ShareDialog from '@/components/public/share-dialog';
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { useState, useEffect } from 'react';
 import DisplayAdBanner from '@/components/public/display-ad-banner';
 import {
@@ -108,7 +109,53 @@ export default function BreedShow({ breed, relatedLitters = [] }: PageProps) {
 
     return (
         <PublicLayout>
-            <Head title={`${breed.name} - Breed Information, History & Health Guide | ${settings.site_name}`} />
+            <SeoHead
+                title={`${breed.name} - Breed Guide, Care, Temperament & Price in India | ${settings.site_name}`}
+                description={breed.description ? breed.description.slice(0, 160) : `Complete guide to ${breed.name} dogs in India. Discover temperament, lifespan, apartment compatibility, exercise needs, and health care advice.`}
+                image={breed.image_url || undefined}
+                type="article"
+                keywords={`${breed.name}, ${breed.name} India, ${breed.name} price in India, ${breed.name} temperament, ${breed.name} apartment dog, dog care guide`}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@graph': [
+                        {
+                            '@type': 'Article',
+                            headline: `${breed.name}: Breed Guide, Temperament & Care in India`,
+                            description: breed.description ? breed.description.slice(0, 160) : `Complete guide to ${breed.name} dogs in India on WoofCircle.`,
+                            image: breed.image_url ? [breed.image_url] : undefined,
+                            author: {
+                                '@type': 'Organization',
+                                name: 'WoofCircle Editorial Team',
+                            },
+                            publisher: {
+                                '@type': 'Organization',
+                                name: 'WoofCircle',
+                            },
+                        },
+                        {
+                            '@type': 'FAQPage',
+                            mainEntity: [
+                                {
+                                    '@type': 'Question',
+                                    name: `What is the average lifespan of a ${breed.name}?`,
+                                    acceptedAnswer: {
+                                        '@type': 'Answer',
+                                        text: `The average life expectancy of a ${breed.name} is ${breed.life_span || '10 to 14 years'}.`,
+                                    },
+                                },
+                                {
+                                    '@type': 'Question',
+                                    name: `Is the ${breed.name} suitable for Indian climate and family homes?`,
+                                    acceptedAnswer: {
+                                        '@type': 'Answer',
+                                        text: breed.temperament || `The ${breed.name} is a versatile companion known for its adaptability with proper training, balanced nutrition, and daily exercise.`,
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                }}
+            />
 
             {/* --- CINEMATIC HERO --- */}
             <div className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-16">

@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { SharedData } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { ArrowRightLeft, BookOpen, ChevronDown, RotateCcw, Scale, Search, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import DisplayAdBanner from '@/components/public/display-ad-banner';
@@ -92,7 +93,22 @@ export default function BreedsIndex({ breeds, breedGroups, filters }: PageProps)
     };
     return (
         <PublicLayout>
-            <Head title={`Dog Breed Information & Guides | ${settings.site_name}`} />
+            <SeoHead
+                title={`Dog Breeds Encyclopedia - Care, Temperament & Indian Climate | ${settings.site_name}`}
+                description="Explore over 100+ dog breeds in India. Learn about temperament, apartment suitability, Indian climate adaptability, grooming, lifespan, and family compatibility."
+                type="website"
+                keywords="dog breeds India, best dog breeds for apartments, Indian native dog breeds, dog breed comparison, Labrador, Golden Retriever, German Shepherd"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'CollectionPage',
+                    name: 'Dog Breeds Encyclopedia & Guide India',
+                    description: 'Explore dog breeds in India: temperament, apartment suitability, grooming, and climate adaptability.',
+                    about: {
+                        '@type': 'Thing',
+                        name: 'Dog Breeds',
+                    },
+                }}
+            />
 
             {/* --- CINEMATIC CLEAN HERO --- */}
             <section className="border-woof-charcoal/5 relative overflow-hidden border-b bg-woof-pearl/5 pt-32 pb-8">

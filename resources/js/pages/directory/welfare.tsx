@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { City, DirectoryItem, PaginatedResponse, SharedData, State } from '@/types';
-import { Head, router, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { ChevronDown, Heart, Info, RotateCcw, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 interface Welfare {
@@ -116,7 +117,23 @@ export default function WelfareListing({
     };
     return (
         <PublicLayout>
-            <Head title={`Verified Animal Welfare Organizations | ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`Animal Welfare Organizations & Rescues in India | ${settings.site_name}`}
+                description="Connect with verified animal welfare groups, dog rescue organizations, shelters, and rehabilitation centers across Bangalore, Mumbai, Delhi, and India."
+                type="website"
+                keywords="animal welfare India, dog rescue Bangalore, animal shelter Mumbai, NGO dog rescue Delhi, animal rehabilitation"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'CollectionPage',
+                    name: 'Animal Welfare Organizations & Rescues in India',
+                    description: 'Connect with verified animal welfare groups, dog rescue organizations, and shelters across India.',
+                    about: {
+                        '@type': 'Thing',
+                        name: 'Animal Welfare and Rescue Organizations in India',
+                    },
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <section className="border-woof-charcoal/5 relative overflow-hidden border-b bg-woof-pearl/5 pt-32 pb-8">
                 <div className="container-wide relative z-10 px-6 lg:px-12">
                     <div>

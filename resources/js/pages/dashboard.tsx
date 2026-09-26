@@ -12,7 +12,8 @@ import {
     type Pet,
     type UpcomingEvent,
 } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import {
     Activity,
     Calendar,
@@ -270,7 +271,7 @@ export default function Dashboard({
                 </>
             }
         >
-            <Head title="Dashboard" />
+            <SeoHead title="Dashboard" noindex={true} />
 
             <div className="space-y-8">
                 {/* Listing Usage Widget */}

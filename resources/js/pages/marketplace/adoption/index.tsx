@@ -120,7 +120,19 @@ export default function AdoptionIndex({
 
     return (
         <PublicLayout>
-            <SeoHead title="Adoption | Woof Circle" /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title="Adopt a Dog & Rescue Pets in India | Verified Pet Adoption | WoofCircle"
+                description="Find loving dogs and puppies available for adoption across India (Bangalore, Mumbai, Delhi, Hyderabad). Give a rescue pet a forever home on WoofCircle."
+                keywords="dog adoption India, adopt puppy Bangalore, rescue dogs Mumbai, adopt a pet Delhi, dog shelter adoption, animal welfare India"
+                url="https://woofcircle.in/adoptions"
+                schema={{
+                    "@context": "https://schema.org",
+                    "@type": "CollectionPage",
+                    "name": "Dog Adoption & Rescue in India",
+                    "description": "Find loving dogs and puppies available for adoption across India. Give a rescue pet a forever home.",
+                    "url": "https://woofcircle.in/adoptions"
+                }}
+            />
             <div className="pointer-events-none fixed inset-0 z-[60] opacity-[0.03] mix-blend-overlay">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/pinstripe-light.png')]" />
             </div>

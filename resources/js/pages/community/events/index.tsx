@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { SharedData } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import {
     ArrowRight,
     Calendar,
@@ -152,7 +153,22 @@ export default function EventsIndex({
 
     return (
         <PublicLayout>
-            <Head title={`Dog Shows, Meetups & Canine Events | ${settings.site_name}`} />
+            <SeoHead
+                title={`Canine Events, Dog Shows & Community Meetups in India | ${settings.site_name}`}
+                description="Discover upcoming dog shows, championship agility competitions, adoption drives, and canine community meetups in Bangalore, Mumbai, Delhi, and across India."
+                type="website"
+                keywords="dog shows India, canine events, dog meetups Bangalore, puppy adoption drive Mumbai, pet exhibition Delhi"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'CollectionPage',
+                    name: 'Canine Events, Dog Shows & Community Meetups in India',
+                    description: 'Discover upcoming dog shows, championship agility trials, and community meetups across India.',
+                    about: {
+                        '@type': 'Thing',
+                        name: 'Canine Events and Dog Shows in India',
+                    },
+                }}
+            />
 
             {/* --- CINEMATIC HERO --- */}
             <section className="bg-woof-pearl/5 border-woof-charcoal/5 relative overflow-hidden border-b pt-32 pb-14">

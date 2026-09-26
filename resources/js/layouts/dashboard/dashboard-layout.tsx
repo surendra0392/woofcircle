@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import SeoHead from '@/components/SeoHead';
 import PublicLayout from '@/layouts/public/public-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
@@ -174,6 +175,7 @@ export default function DashboardLayout({ children, breadcrumbs, title, subtitle
 
     return (
         <PublicLayout>
+            <SeoHead title={title} noindex={true} />
             {/* Hero / Header */}
             <section className="bg-woof-cream/60 border-woof-charcoal/5 relative border-b pt-32 pb-8 lg:pt-36 lg:pb-10">
                 <div className="container-wide px-6 lg:px-12">

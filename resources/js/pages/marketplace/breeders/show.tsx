@@ -6,7 +6,8 @@ import PublicLayout from '@/layouts/public/public-layout';
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { BreederProfile, Litter, SharedData } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { ArrowUpRight, Award, Calendar, Camera, CheckCircle2, Dog, Heart, Info, MapPin, MessageCircle, Phone, ShieldCheck, Star, Trophy, User } from 'lucide-react';
 import { toast } from 'sonner';
 import SaveButton from '@/components/public/save-button';
@@ -108,7 +109,27 @@ export default function BreederShow({ breeder }: { breeder: BreederProfile }) {
 
     return (
         <PublicLayout>
-            <Head title={`${displayName} - Verified Breeder Profile | ${settings.site_name}`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`${displayName} - Verified Dog Breeder in ${breeder.city?.name || 'India'} | ${settings.site_name}`}
+                description={breeder.bio ? breeder.bio.slice(0, 160) : `${displayName} is a certified, ethical dog breeder on WoofCircle based in ${breeder.city?.name || 'India'}. View pedigreed litters and contact details.`}
+                image={breeder.logo_url || undefined}
+                type="profile"
+                keywords={`${displayName}, dog breeder ${breeder.city?.name || 'India'}, ethical kennel ${breeder.city?.name || ''}, certified breeder`}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'LocalBusiness',
+                    name: displayName,
+                    description: breeder.bio || `${displayName} is a certified dog breeder in ${breeder.city?.name || 'India'}.`,
+                    image: breeder.logo_url ? [breeder.logo_url] : undefined,
+                    address: {
+                        '@type': 'PostalAddress',
+                        addressLocality: breeder.city?.name || undefined,
+                        addressRegion: breeder.state?.name || undefined,
+                        addressCountry: 'IN',
+                    },
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <div className="bg-woof-pearl/5 border-[#e8ded1] relative overflow-hidden border-b pt-32 pb-16">
                 {/* Immersive Background */}
                 <div className="animate-reveal absolute inset-0 z-0 rounded-none opacity-10 blur-3xl">

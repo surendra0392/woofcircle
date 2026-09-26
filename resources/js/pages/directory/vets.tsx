@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import PublicLayout from '@/layouts/public/public-layout';
 import { cn } from '@/lib/utils';
 import { City, SharedData, State } from '@/types';
-import { Head, router, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { ChevronDown, Info, RotateCcw, Search, Stethoscope } from 'lucide-react';
 import { useEffect, useState } from 'react';
 interface Vet {
@@ -116,7 +117,23 @@ export default function VetsListing({
     };
     return (
         <PublicLayout>
-            <Head title={`Elite Veterinary Clinics | ${settings.site_name} Directory`} /> {/* --- CINEMATIC HERO --- */}
+            <SeoHead
+                title={`Verified Veterinary Clinics & 24/7 Animal Hospitals in India | ${settings.site_name}`}
+                description="Find top-rated veterinary clinics, 24/7 emergency pet hospitals, surgical centers, and licensed veterinarians across Bangalore, Mumbai, Delhi, Hyderabad, and India."
+                type="website"
+                keywords="veterinary clinics India, vet hospital Bangalore, emergency vet Mumbai, 24 7 pet clinic Delhi, pet surgery India"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'CollectionPage',
+                    name: 'Verified Veterinary Clinics & Hospitals in India',
+                    description: 'Find top-rated veterinary clinics and emergency pet hospitals across India.',
+                    about: {
+                        '@type': 'MedicalBusiness',
+                        name: 'Veterinary Care in India',
+                    },
+                }}
+            />
+            {/* --- CINEMATIC HERO --- */}
             <section className="border-woof-charcoal/5 relative overflow-hidden border-b bg-woof-pearl/5 pt-32 pb-8">
                 <div className="container-wide relative z-10 px-6 lg:px-12">
                     <div>

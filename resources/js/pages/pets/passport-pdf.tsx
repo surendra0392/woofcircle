@@ -1,5 +1,5 @@
 import React from 'react';
-import { Head } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import { Printer, Crown, User, Dna, CheckCircle2, Stethoscope, ArrowLeft, Phone, Mail, AlertTriangle } from 'lucide-react';
 
 interface PassportPdfProps {
@@ -44,7 +44,7 @@ export default function PetPassportPdfPage({ pet, verification_status, issued_at
 
     return (
         <div className="min-h-screen bg-[#f4ebe1] text-woof-charcoal font-sans">
-            <Head title={`Digital Pet Passport - ${pet.name} (${passportId})`} />
+            <SeoHead title={`Digital Pet Passport - ${pet.name} (${passportId})`} noindex={true} />
 
             {/* Embedded Print CSS to ensure full-bleed PDF output */}
             <style dangerouslySetInnerHTML={{

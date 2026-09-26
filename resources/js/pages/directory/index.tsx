@@ -2,7 +2,8 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import PublicLayout from '@/layouts/public/public-layout';
-import { Head, Link, router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import {
     ArrowRight,
     Award,
@@ -210,7 +211,37 @@ export default function DirectoryIndex({
 
     return (
         <PublicLayout>
-            <Head title="Specialist Directory | Verified Vets, Trainers & Boarding | WoofCircle" />
+            <SeoHead
+                title="Specialist Canine Directory - Verified Vets, Trainers & Boarding in India | WoofCircle"
+                description="Discover verified veterinary clinics, 24/7 animal hospitals, certified master dog trainers, luxury pet resorts, and boarding facilities across Bangalore, Mumbai, Delhi, and India."
+                type="website"
+                keywords="veterinary clinic India, dog trainer Bangalore, pet boarding Mumbai, 24/7 animal hospital Delhi, canine specialist directory"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@graph': [
+                        {
+                            '@type': 'CollectionPage',
+                            name: 'Canine Specialist Directory India',
+                            description: 'Find verified veterinary clinics, certified dog trainers, luxury boarding retreats, and pet services across India.',
+                            about: {
+                                '@type': 'Thing',
+                                name: 'Veterinary and Pet Care Services in India',
+                            },
+                        },
+                        {
+                            '@type': 'FAQPage',
+                            mainEntity: faqs.map((faq) => ({
+                                '@type': 'Question',
+                                name: faq.question,
+                                acceptedAnswer: {
+                                    '@type': 'Answer',
+                                    text: faq.answer,
+                                },
+                            })),
+                        },
+                    ],
+                }}
+            />
 
             {/* --- HERO & INTERACTIVE SEARCH SECTION --- */}
             <section className="relative overflow-hidden border-b border-[#e8ded1] bg-gradient-to-b from-[#fcfbf9] via-white to-[#fcfbf9] pt-28 pb-16 lg:pt-36 lg:pb-20">

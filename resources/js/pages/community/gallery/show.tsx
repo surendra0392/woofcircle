@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import PublicLayout from '@/layouts/public/public-layout';
 import { SharedData } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import SeoHead from '@/components/SeoHead';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import {
     ArrowLeft,
@@ -338,7 +339,20 @@ export default function GalleryShow({ gallery, isLiked: initialIsLiked, likesCou
 
     return (
         <PublicLayout>
-            <Head title={`${gallery.title} - Visual Collection | ${settings.site_name}`} />
+            <SeoHead
+                title={`${gallery.title} - Dog Photos & Collection | ${settings.site_name}`}
+                description={gallery.description ? gallery.description.slice(0, 160) : `Browse the ${gallery.title} photo collection on WoofCircle. High-resolution captures, breed portraits, and community stories.`}
+                image={gallery.image_url || undefined}
+                type="website"
+                keywords={`${gallery.title}, dog photos, canine photo collection, dog pictures India`}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'ImageGallery',
+                    name: gallery.title,
+                    description: gallery.description || `Browse the ${gallery.title} collection on WoofCircle.`,
+                    image: gallery.image_url ? [gallery.image_url] : undefined,
+                }}
+            />
 
             {/* --- CINEMATIC CLEAN LUXURY HERO --- */}
             <section className="border-woof-charcoal/5 relative overflow-hidden border-b bg-woof-pearl/5 pt-32 pb-12">

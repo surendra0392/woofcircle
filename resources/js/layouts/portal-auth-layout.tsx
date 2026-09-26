@@ -18,7 +18,11 @@ interface PortalAuthLayoutProps {
 export default function PortalAuthLayout({ children, title, description, portalName, heading, subheading }: PortalAuthLayoutProps) {
     return (
         <div className="bg-[#fcfbf9] min-h-screen flex flex-col items-center justify-center px-4 py-12">
-            <Head title={`${title} | ${portalName}`} />
+            <Head>
+                <title>{`${title} | ${portalName}`}</title>
+                <meta name="description" content={description} />
+                <meta name="robots" content="noindex, nofollow" />
+            </Head>
 
             {/* Brand header */}
             <div className="flex items-center gap-3 mb-6">
